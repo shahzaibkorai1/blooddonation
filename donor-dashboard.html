@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Donor Dashboard — LifeShare</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--red:#D92B3A;--red2:#FF4D5E;--red-lt:#FFF0F1;--green:#10B981;--green-lt:#D1FAE5;--amber:#F59E0B;--amber-lt:#FEF3C7;--blue:#3B82F6;--blue-lt:#DBEAFE;--ink:#0F172A;--slate:#334155;--muted:#64748B;--ghost:#F8FAFC;--border:#E2E8F0;--border2:#F1F5F9;--sidebar-w:260px;--shadow:0 4px 24px rgba(15,23,42,0.08)}
+body{font-family:'DM Sans',sans-serif;background:var(--ghost);color:var(--ink);display:flex;min-height:100vh;overflow-x:hidden}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px}
+.sidebar{width:var(--sidebar-w);min-width:var(--sidebar-w);background:var(--ink);display:flex;flex-direction:column;min-height:100vh;position:fixed;left:0;top:0;bottom:0;z-index:100;transition:transform .3s}
+.sidebar-logo{padding:22px 18px 18px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:10px;text-decoration:none}
+.logo-mark{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--red),var(--red2));display:grid;place-items:center;font-size:1.05rem;box-shadow:0 4px 10px rgba(217,43,58,.4);flex-shrink:0}
+.logo-text{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:#fff}
+.logo-text span{color:var(--red2)}
+.sidebar-profile{margin:14px 10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:14px}
+.sp-avatar{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--red),var(--red2));display:grid;place-items:center;font-size:1.1rem;margin-bottom:9px;box-shadow:0 4px 12px rgba(217,43,58,.3)}
+.sp-name{color:#fff;font-weight:700;font-size:.9rem}.sp-role{color:rgba(255,255,255,.45);font-size:.73rem;margin-top:2px}
+.sp-blood{display:inline-flex;align-items:center;gap:5px;margin-top:8px;background:var(--red);color:#fff;padding:3px 9px;border-radius:5px;font-size:.73rem;font-weight:700}
+.sp-verified{display:inline-flex;align-items:center;gap:3px;margin-left:5px;background:var(--green-lt);color:var(--green);padding:3px 7px;border-radius:5px;font-size:.68rem;font-weight:700}
+.avail-toggle{margin:0 10px 14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:12px}
+.at-label{color:rgba(255,255,255,.45);font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
+.at-row{display:flex;align-items:center;justify-content:space-between}
+.at-status{color:#fff;font-size:.85rem;font-weight:600}
+.toggle-sw{position:relative;width:42px;height:22px}.toggle-sw input{opacity:0;width:0;height:0}
+.toggle-track{position:absolute;inset:0;border-radius:99px;background:#374151;cursor:pointer;transition:background .3s}
+.toggle-track::after{content:'';position:absolute;left:3px;top:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .3s}
+.toggle-sw input:checked+.toggle-track{background:var(--green)}.toggle-sw input:checked+.toggle-track::after{transform:translateX(20px)}
+.sidebar-nav{flex:1;padding:6px 10px;overflow-y:auto}
+.nav-label{font-size:.63rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.22);padding:14px 8px 7px}
+.nav-item{display:flex;align-items:center;gap:11px;padding:10px 11px;border-radius:9px;color:rgba(255,255,255,.52);font-size:.86rem;font-weight:500;cursor:pointer;transition:all .2s;margin-bottom:1px;text-decoration:none;position:relative}
+.nav-item:hover{background:rgba(255,255,255,.06);color:#fff}
+.nav-item.active{background:rgba(217,43,58,.14);color:#fff;border:1px solid rgba(217,43,58,.22)}
+.nav-item.active::before{content:'';position:absolute;left:0;top:25%;bottom:25%;width:3px;border-radius:0 3px 3px 0;background:var(--red)}
+.nav-icon{font-size:1.05rem;width:20px;text-align:center;flex-shrink:0}
+.nav-badge{margin-left:auto;background:var(--red);color:#fff;font-size:.63rem;font-weight:700;padding:2px 6px;border-radius:99px;min-width:18px;text-align:center}
+.sidebar-bottom{padding:10px;border-top:1px solid rgba(255,255,255,.07)}
+.btn-logout{width:100%;padding:9px;border-radius:9px;background:rgba(217,43,58,.09);border:1px solid rgba(217,43,58,.18);color:rgba(255,255,255,.65);font-size:.83rem;font-weight:600;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;display:flex;align-items:center;justify-content:center;gap:7px}
+.btn-logout:hover{background:rgba(217,43,58,.18);color:#fff}
+.main{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;min-height:100vh}
+.topbar{background:#fff;border-bottom:1px solid var(--border);padding:0 24px;height:62px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.topbar-left{display:flex;align-items:center;gap:14px}
+.menu-btn{display:none;background:none;border:none;cursor:pointer;font-size:1.3rem;padding:4px}
+.page-title{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700}.page-sub{font-size:.77rem;color:var(--muted);margin-top:1px}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.tb-time{font-size:.78rem;color:var(--muted)}
+.notif-btn{position:relative;width:36px;height:36px;border-radius:9px;background:var(--ghost);border:1px solid var(--border);display:grid;place-items:center;cursor:pointer;font-size:1rem;transition:all .2s}
+.notif-btn:hover{background:var(--red-lt);border-color:var(--red)}
+.notif-dot{position:absolute;top:5px;right:5px;width:7px;height:7px;border-radius:50%;background:var(--red);border:2px solid #fff}
+.tb-avatar{width:36px;height:36px;border-radius:9px;background:linear-gradient(135deg,var(--red),var(--red2));display:grid;place-items:center;font-size:.95rem;cursor:pointer;box-shadow:0 2px 8px rgba(217,43,58,.3)}
+.content{padding:24px;flex:1}
+.welcome-banner{background:linear-gradient(135deg,var(--ink) 0%,#1E293B 100%);border-radius:18px;padding:24px 28px;display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;position:relative;overflow:hidden}
+.wb-bg{position:absolute;right:-20px;top:-20px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(217,43,58,.2),transparent 65%)}
+.wb-left{position:relative;z-index:1}
+.wb-tag{display:inline-flex;align-items:center;gap:5px;background:rgba(16,185,129,.14);border:1px solid rgba(16,185,129,.22);color:#6EE7B7;padding:4px 11px;border-radius:99px;font-size:.7rem;font-weight:700;margin-bottom:10px}
+.wb-dot{width:6px;height:6px;border-radius:50%;background:#6EE7B7;animation:pd 1.6s ease-in-out infinite}
+@keyframes pd{0%,100%{box-shadow:0 0 0 0 rgba(110,231,183,.5)}50%{box-shadow:0 0 0 5px rgba(110,231,183,0)}}
+.wb-title{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:900;color:#fff;margin-bottom:5px}
+.wb-sub{font-size:.86rem;color:rgba(255,255,255,.52);line-height:1.5}
+.wb-right{display:flex;flex-direction:column;align-items:flex-end;gap:8px;position:relative;z-index:1}
+.wb-blood{background:var(--red);color:#fff;font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:900;width:58px;height:58px;border-radius:14px;display:grid;place-items:center;box-shadow:0 6px 18px rgba(217,43,58,.4)}
+.wb-last{font-size:.72rem;color:rgba(255,255,255,.4);text-align:right}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
+.stat-card{background:#fff;border-radius:14px;padding:18px;border:1px solid var(--border);transition:all .25s;position:relative;overflow:hidden}
+.stat-card::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:14px 14px 0 0}
+.c-red::after{background:linear-gradient(90deg,var(--red),var(--red2))}.c-green::after{background:linear-gradient(90deg,var(--green),#059669)}.c-amber::after{background:linear-gradient(90deg,var(--amber),#D97706)}.c-blue::after{background:linear-gradient(90deg,var(--blue),#2563EB)}
+.stat-card:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.sc-icon{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;font-size:1.1rem;margin-bottom:12px}
+.sc-red{background:var(--red-lt)}.sc-green{background:var(--green-lt)}.sc-amber{background:var(--amber-lt)}.sc-blue{background:var(--blue-lt)}
+.sc-num{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:900;line-height:1;margin-bottom:3px}.sc-label{font-size:.76rem;color:var(--muted);font-weight:500}
+.sc-change{display:inline-flex;align-items:center;gap:3px;font-size:.7rem;font-weight:600;margin-top:7px;padding:2px 7px;border-radius:99px}
+.sc-up{background:var(--green-lt);color:var(--green)}.sc-down{background:var(--red-lt);color:var(--red)}
+.main-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:18px;margin-bottom:18px}
+.card{background:#fff;border-radius:14px;border:1px solid var(--border);overflow:hidden}
+.card-header{padding:18px 22px 14px;border-bottom:1px solid var(--border2);display:flex;align-items:center;justify-content:space-between}
+.card-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700}.card-sub{font-size:.76rem;color:var(--muted);margin-top:2px}
+.card-badge{font-size:.7rem;font-weight:700;padding:3px 9px;border-radius:99px}
+.badge-red{background:var(--red-lt);color:var(--red)}.badge-green{background:var(--green-lt);color:var(--green)}.badge-amber{background:var(--amber-lt);color:var(--amber)}.badge-blue{background:var(--blue-lt);color:var(--blue)}
+.card-body{padding:18px 22px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.fg{margin-bottom:12px}.fg label{display:block;font-size:.76rem;font-weight:600;color:var(--slate);margin-bottom:5px}.fg label span{color:var(--red)}
+.input-wrap{position:relative}.fi{position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:.88rem;pointer-events:none}
+input[type=text],input[type=number],select,textarea{width:100%;padding:9px 11px 9px 34px;border:1.5px solid var(--border);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.86rem;color:var(--ink);background:#fff;outline:none;transition:all .2s;appearance:none}
+input:focus,select:focus,textarea:focus{border-color:var(--red);box-shadow:0 0 0 3px rgba(217,43,58,.08)}
+textarea{padding-left:11px;resize:vertical;min-height:64px}
+.blood-row{display:flex;gap:6px;flex-wrap:wrap}
+.bg-btn{padding:7px 11px;border-radius:7px;font-weight:700;font-size:.8rem;border:1.5px solid var(--border);background:#fff;color:var(--muted);cursor:pointer;transition:all .2s}
+.bg-btn:hover{border-color:var(--red);color:var(--red)}.bg-btn.sel{background:var(--red);border-color:var(--red);color:#fff;box-shadow:0 3px 8px rgba(217,43,58,.22)}
+.btn-post{width:100%;padding:11px;border-radius:9px;background:linear-gradient(135deg,var(--red),var(--red2));color:#fff;font-size:.9rem;font-weight:700;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;box-shadow:0 4px 14px rgba(217,43,58,.28);transition:all .25s;margin-top:3px;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn-post:hover{transform:translateY(-1px);box-shadow:0 7px 18px rgba(217,43,58,.35)}.btn-post:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.requests-list{display:flex;flex-direction:column}
+.req-item{padding:14px 18px;border-bottom:1px solid var(--border2);display:flex;align-items:center;gap:12px;transition:background .2s}
+.req-item:last-child{border-bottom:none}.req-item:hover{background:#FAFBFC}
+.req-blood{width:40px;height:40px;border-radius:9px;display:grid;place-items:center;font-weight:900;font-size:.85rem;flex-shrink:0}
+.rb-red{background:var(--red);color:#fff}.rb-red-lt{background:var(--red-lt);color:var(--red)}
+.req-info{flex:1;min-width:0}.req-name{font-weight:600;font-size:.86rem;margin-bottom:2px}
+.req-meta{font-size:.73rem;color:var(--muted);display:flex;gap:8px;flex-wrap:wrap}
+.urgency-badge{font-size:.66rem;font-weight:700;padding:2px 7px;border-radius:99px;white-space:nowrap}
+.u-emergency{background:#FEF2F2;color:#DC2626}.u-urgent{background:var(--amber-lt);color:#D97706}.u-normal{background:var(--green-lt);color:var(--green)}
+.req-action{padding:6px 12px;border-radius:7px;font-size:.76rem;font-weight:600;background:var(--red-lt);color:var(--red);border:1px solid #FECACA;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;white-space:nowrap;flex-shrink:0}
+.req-action:hover{background:var(--red);color:#fff}
+.empty-state{padding:32px;text-align:center;color:var(--muted);font-size:.86rem}.empty-icon{font-size:2rem;margin-bottom:8px}
+.bottom-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px}
+.act-item{display:flex;align-items:flex-start;gap:11px;padding:13px 18px;border-bottom:1px solid var(--border2)}
+.act-item:last-child{border-bottom:none}
+.act-icon{width:32px;height:32px;border-radius:8px;flex-shrink:0;display:grid;place-items:center;font-size:.88rem;margin-top:1px}
+.act-body{flex:1}.act-title{font-size:.81rem;font-weight:600;margin-bottom:2px}.act-sub{font-size:.71rem;color:var(--muted);line-height:1.4}
+.qa-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;padding:14px 18px}
+.qa-btn{padding:12px 10px;border-radius:10px;text-align:center;cursor:pointer;border:1.5px solid var(--border);background:#fff;transition:all .22s;font-family:'DM Sans',sans-serif}
+.qa-btn:hover{transform:translateY(-2px);box-shadow:var(--shadow)}.qa-icon{font-size:1.3rem;margin-bottom:5px}.qa-label{font-size:.76rem;font-weight:600;color:var(--ink)}.qa-sub{font-size:.66rem;color:var(--muted);margin-top:2px}
+.qa-red:hover{border-color:var(--red);background:var(--red-lt)}.qa-green:hover{border-color:var(--green);background:var(--green-lt)}.qa-blue:hover{border-color:var(--blue);background:var(--blue-lt)}.qa-amber:hover{border-color:var(--amber);background:var(--amber-lt)}
+.spin{width:14px;height:14px;border-radius:50%;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;animation:spin .7s linear infinite;display:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+.toast{position:fixed;bottom:24px;right:24px;z-index:9999;background:var(--ink);color:#fff;padding:13px 18px;border-radius:11px;display:flex;align-items:center;gap:11px;box-shadow:0 8px 28px rgba(0,0,0,.25);transform:translateY(80px);opacity:0;transition:all .35s cubic-bezier(.175,.885,.32,1.275);max-width:320px}
+.toast.show{transform:translateY(0);opacity:1}.toast-text{font-size:.86rem;line-height:1.4}.toast-close{background:none;border:none;color:rgba(255,255,255,.45);cursor:pointer;font-size:.95rem;padding:0 0 0 7px;flex-shrink:0}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:999;display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:all .3s}
+.modal-overlay.open{opacity:1;visibility:visible}
+.modal{background:#fff;border-radius:18px;padding:28px;max-width:420px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.2);transform:translateY(20px);transition:transform .3s}
+.modal-overlay.open .modal{transform:translateY(0)}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.modal-title{font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:700}
+.modal-close{background:none;border:none;cursor:pointer;font-size:1.2rem;color:var(--muted);transition:color .2s}
+.modal-close:hover{color:var(--ink)}
+.contact-card{background:var(--ghost);border-radius:12px;padding:18px;margin-bottom:14px}
+.contact-row{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px}.contact-row:last-child{margin-bottom:0}
+.contact-icon{font-size:1.1rem;width:22px;flex-shrink:0}
+.contact-label{font-size:.72rem;color:var(--muted);margin-bottom:1px}.contact-val{font-size:.9rem;font-weight:600;color:var(--ink)}
+.urgency-pill{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:99px;font-size:.78rem;font-weight:700;margin-bottom:14px}
+.btn-call{width:100%;padding:11px;border-radius:9px;background:linear-gradient(135deg,var(--green),#059669);color:#fff;font-size:.9rem;font-weight:700;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .25s;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn-call:hover{transform:translateY(-1px);box-shadow:0 5px 16px rgba(16,185,129,.35)}
+.btn-whatsapp{width:100%;padding:11px;border-radius:9px;background:linear-gradient(135deg,#25D366,#128C7E);color:#fff;font-size:.9rem;font-weight:700;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .25s;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:8px}
+.btn-whatsapp:hover{transform:translateY(-1px)}
+.skeleton{background:linear-gradient(90deg,#f0f0f0 25%,#e8e8e8 50%,#f0f0f0 75%);background-size:200% 100%;animation:sk 1.5s infinite;border-radius:6px;height:14px;margin-bottom:8px}
+@keyframes sk{0%{background-position:200% 0}100%{background-position:-200% 0}}
+@media(max-width:1100px){.stats-grid{grid-template-columns:repeat(2,1fr)}.bottom-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:860px){.sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}.main{margin-left:0}.menu-btn{display:block}.main-grid{grid-template-columns:1fr}.bottom-grid{grid-template-columns:1fr}}
+@media(max-width:600px){.stats-grid{grid-template-columns:1fr 1fr}.content{padding:14px}.topbar{padding:0 14px}}
+</style>
+</head>
+<body>
+<aside class="sidebar" id="sidebar">
+  <a href="index.html" class="sidebar-logo">
+    <div class="logo-mark">🩸</div>
+    <span class="logo-text">Life<span>Share</span></span>
+  </a>
+  <div class="sidebar-profile">
+    <div class="sp-avatar">👤</div>
+    <div class="sp-name" id="sidebarName">Loading...</div>
+    <div class="sp-role" id="sidebarCity">Blood Donor</div>
+    <div style="display:flex;align-items:center;gap:4px;margin-top:7px">
+      <div class="sp-blood" id="sidebarBlood">🩸 —</div>
+      <div class="sp-verified">✓ Verified</div>
+    </div>
+  </div>
+  <div class="avail-toggle">
+    <div class="at-label">Availability Status</div>
+    <div class="at-row">
+      <span class="at-status" id="availText">🟢 Available</span>
+      <label class="toggle-sw"><input type="checkbox" checked onchange="toggleAvail(this)"/><div class="toggle-track"></div></label>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-label">Main Menu</div>
+    <a class="nav-item active"><span class="nav-icon">🏠</span> Dashboard</a>
+    <a class="nav-item" onclick="scrollToPost()"><span class="nav-icon">➕</span> Post Availability</a>
+    <a class="nav-item" id="reqNavItem"><span class="nav-icon">🔔</span> Blood Requests <span class="nav-badge" id="reqBadge">0</span></a>
+    <a class="nav-item" onclick="window.location.href='medicine-listing.html'"><span class="nav-icon">💊</span> Browse Medicines</a>
+    <div class="nav-label">Account</div>
+    <a class="nav-item"><span class="nav-icon">👤</span> My Profile</a>
+    <a class="nav-item"><span class="nav-icon">⚙️</span> Settings</a>
+  </nav>
+  <div class="sidebar-bottom">
+    <button class="btn-logout" onclick="doLogout()">🚪 Log Out</button>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="menu-btn" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+      <div><div class="page-title">Donor Dashboard</div><div class="page-sub" id="todayDate"></div></div>
+    </div>
+    <div class="topbar-right">
+      <span class="tb-time" id="liveTime"></span>
+      <div class="notif-btn"><span>🔔</span><div class="notif-dot"></div></div>
+      <div class="tb-avatar">👤</div>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="welcome-banner">
+      <div class="wb-bg"></div>
+      <div class="wb-left">
+        <div class="wb-tag"><div class="wb-dot"></div> Active Donor</div>
+        <div class="wb-title">Welcome back, <span id="welcomeName">Donor</span>! 👋</div>
+        <div class="wb-sub">You have <strong style="color:#fff" id="reqCountBanner">0 blood requests</strong> near your location.</div>
+      </div>
+      <div class="wb-right">
+        <div class="wb-blood" id="wbBlood">—</div>
+        <div class="wb-last">LifeShare Donor</div>
+      </div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card c-red"><div class="sc-icon sc-red">🩸</div><div class="sc-num" id="statMyPosts">—</div><div class="sc-label">My Posts</div><div class="sc-change sc-up">↑ Active</div></div>
+      <div class="stat-card c-amber"><div class="sc-icon sc-amber">🔔</div><div class="sc-num" id="statRequests">—</div><div class="sc-label">Blood Requests</div><div class="sc-change sc-down">↑ Near You</div></div>
+      <div class="stat-card c-green"><div class="sc-icon sc-green">💊</div><div class="sc-num" id="statMeds">—</div><div class="sc-label">Medicines Listed</div><div class="sc-change sc-up">↑ Available</div></div>
+      <div class="stat-card c-blue"><div class="sc-icon sc-blue">📍</div><div class="sc-num">Live</div><div class="sc-label">GPS Status</div><div class="sc-change sc-up">📡 Active</div></div>
+    </div>
+
+    <div class="main-grid">
+      <!-- POST FORM -->
+      <div class="card" id="postSection">
+        <div class="card-header">
+          <div><div class="card-title">Post Blood Availability</div><div class="card-sub">Recipients will see this on their dashboard instantly</div></div>
+          <span class="card-badge badge-red">LIVE</span>
+        </div>
+        <div class="card-body">
+          <div class="fg">
+            <label>Blood Group <span>*</span></label>
+            <div class="blood-row">
+              <div class="bg-btn sel" onclick="selBg(this,'A+')">A+</div>
+              <div class="bg-btn" onclick="selBg(this,'A-')">A−</div>
+              <div class="bg-btn" onclick="selBg(this,'B+')">B+</div>
+              <div class="bg-btn" onclick="selBg(this,'B-')">B−</div>
+              <div class="bg-btn" onclick="selBg(this,'AB+')">AB+</div>
+              <div class="bg-btn" onclick="selBg(this,'AB-')">AB−</div>
+              <div class="bg-btn" onclick="selBg(this,'O+')">O+</div>
+              <div class="bg-btn" onclick="selBg(this,'O-')">O−</div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="fg" style="margin-bottom:0"><label>Units Available <span>*</span></label><div class="input-wrap"><span class="fi">🩸</span><input type="number" id="postUnits" placeholder="1" min="1" max="10" value="1"/></div></div>
+            <div class="fg" style="margin-bottom:0"><label>Availability <span>*</span></label><div class="input-wrap"><span class="fi">📌</span><select id="postStatus"><option value="available">Available Now</option><option value="this_week">This Week</option><option value="unavailable">Unavailable</option></select></div></div>
+          </div>
+          <div class="fg" style="margin-top:12px"><label>City <span>*</span></label><div class="input-wrap"><span class="fi">📍</span><select id="postCity"><option value="Lahore">Lahore</option><option value="Multan">Multan</option><option value="Karachi">Karachi</option><option value="Islamabad">Islamabad</option><option value="Faisalabad">Faisalabad</option><option value="Rawalpindi">Rawalpindi</option><option value="Peshawar">Peshawar</option><option value="Quetta">Quetta</option></select></div></div>
+          <div class="fg"><label>Contact Phone <span>*</span></label><div class="input-wrap"><span class="fi">📞</span><input type="text" id="postPhone" placeholder="+92 300 0000000"/></div></div>
+          <div class="fg"><label>Notes</label><textarea id="postNotes" placeholder="e.g. Call before visiting..."></textarea></div>
+          <button class="btn-post" onclick="postAvailability()" id="postBtn"><span id="postBtnText">🩸 Post Availability Now</span><div class="spin" id="postSpin"></div></button>
+        </div>
+      </div>
+
+      <!-- REQUESTS LIST -->
+      <div class="card">
+        <div class="card-header">
+          <div><div class="card-title">Nearby Blood Requests</div><div class="card-sub">Real requests from recipients · Click Respond for contact</div></div>
+          <span class="card-badge badge-amber" id="reqCardBadge">Loading...</span>
+        </div>
+        <div class="requests-list" id="requestsList">
+          <div class="req-item"><div class="skeleton" style="width:40px;height:40px;border-radius:9px;flex-shrink:0"></div><div style="flex:1"><div class="skeleton" style="width:120px"></div><div class="skeleton" style="width:80px;height:10px;margin-top:6px"></div></div></div>
+          <div class="req-item"><div class="skeleton" style="width:40px;height:40px;border-radius:9px;flex-shrink:0"></div><div style="flex:1"><div class="skeleton" style="width:100px"></div><div class="skeleton" style="width:70px;height:10px;margin-top:6px"></div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bottom-grid">
+      <div class="card">
+        <div class="card-header"><div><div class="card-title">My Active Posts</div><div class="card-sub">Your blood availability posts</div></div><span class="card-badge badge-green" id="myPostsBadge">—</span></div>
+        <div class="requests-list" id="myPostsList"><div class="empty-state"><div class="empty-icon">📋</div><div>Post availability above to see it here</div></div></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div><div class="card-title">Recent Activity</div><div class="card-sub">Latest updates</div></div></div>
+        <div id="activityList">
+          <div class="act-item"><div class="act-icon sc-green">✅</div><div class="act-body"><div class="act-title">Dashboard Loaded</div><div class="act-sub">Real-time data connected</div></div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div><div class="card-title">Quick Actions</div></div></div>
+        <div class="qa-grid">
+          <div class="qa-btn qa-red" onclick="scrollToPost()"><div class="qa-icon">🩸</div><div class="qa-label">Post Blood</div><div class="qa-sub">Add availability</div></div>
+          <div class="qa-btn qa-green" onclick="window.location.href='medicine-listing.html'"><div class="qa-icon">💊</div><div class="qa-label">Medicines</div><div class="qa-sub">Share unused meds</div></div>
+          <div class="qa-btn qa-amber" onclick="loadRequests()"><div class="qa-icon">🔄</div><div class="qa-label">Refresh</div><div class="qa-sub">Reload requests</div></div>
+          <div class="qa-btn qa-blue" onclick="window.location.href='recipient-dashboard.html'"><div class="qa-icon">👁️</div><div class="qa-label">Recipient View</div><div class="qa-sub">See other side</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CONTACT MODAL -->
+<div class="modal-overlay" id="contactModal">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">📞 Recipient Contact Details</div><button class="modal-close" onclick="closeModal()">✕</button></div>
+    <div id="modalContent">Loading...</div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"><span id="toastText"></span><button class="toast-close" onclick="hideToast()">✕</button></div>
+
+<script>
+const API='http://127.0.0.1:5000';
+let selectedBg='A+';
+let currentUser={};
+let toastT;
+
+window.onload=async()=>{
+  const token=localStorage.getItem('token');
+  if(!token){window.location.href='login.html';return;}
+
+  currentUser={
+    id:localStorage.getItem('user_id'),
+    name:localStorage.getItem('user_name')||'Donor',
+    blood:localStorage.getItem('blood_group')||'—',
+    city:localStorage.getItem('city')||'Lahore',
+    phone:localStorage.getItem('phone')||''
+  };
+
+  document.getElementById('sidebarName').textContent=currentUser.name;
+  document.getElementById('sidebarCity').textContent='Blood Donor · '+currentUser.city;
+  document.getElementById('sidebarBlood').textContent='🩸 '+currentUser.blood;
+  document.getElementById('welcomeName').textContent=currentUser.name.split(' ')[0];
+  document.getElementById('wbBlood').textContent=currentUser.blood||'—';
+  document.getElementById('postCity').value=currentUser.city||'Lahore';
+  document.getElementById('postPhone').value=currentUser.phone||'';
+  document.getElementById('todayDate').textContent=new Date().toLocaleDateString('en-PK',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+
+  if(currentUser.blood&&currentUser.blood!=='—'){
+    document.querySelectorAll('.bg-btn').forEach(b=>{b.classList.remove('sel');if(b.textContent.trim()===currentUser.blood){b.classList.add('sel');selectedBg=currentUser.blood;}});
+  }
+
+  setInterval(()=>{document.getElementById('liveTime').textContent=new Date().toLocaleTimeString('en-PK',{hour:'2-digit',minute:'2-digit'});},1000);
+
+  await loadRequests();
+  await loadMyPosts();
+  await loadMedStats();
+  setInterval(loadRequests,30000);
+};
+
+async function loadRequests(){
+  const list=document.getElementById('requestsList');
+  try{
+    const res=await fetch(API+'/api/blood/requests');
+    const data=await res.json();
+    const reqs=data.requests||[];
+    const count=reqs.length;
+    document.getElementById('reqCardBadge').textContent=count+' Active';
+    document.getElementById('reqCountBanner').textContent=count+' blood request'+(count!==1?'s':'');
+    document.getElementById('statRequests').textContent=count;
+    document.getElementById('reqBadge').textContent=count;
+    if(count===0){list.innerHTML='<div class="empty-state"><div class="empty-icon">📭</div><div>No blood requests at the moment</div></div>';return;}
+    list.innerHTML=reqs.map(r=>`
+      <div class="req-item">
+        <div class="req-blood ${r.blood_group&&r.blood_group.includes('-')?'rb-red-lt':'rb-red'}">${r.blood_group}</div>
+        <div class="req-info">
+          <div class="req-name">${r.recipient_name||'Anonymous Recipient'}</div>
+          <div class="req-meta">
+            <span>📍 ${r.city||r.recipient_city_real||'Pakistan'}</span>
+            <span>💧 ${r.units_needed||1} unit(s)</span>
+            <span class="urgency-badge ${r.urgency==='emergency'?'u-emergency':r.urgency==='urgent'?'u-urgent':'u-normal'}">
+              ${r.urgency==='emergency'?'🚨':r.urgency==='urgent'?'⚠️':'✅'} ${(r.urgency||'normal').charAt(0).toUpperCase()+(r.urgency||'normal').slice(1)}
+            </span>
+          </div>
+        </div>
+        <button class="req-action" onclick="showContact(${r.id})">Respond</button>
+      </div>`).join('');
+  }catch(err){
+    list.innerHTML='<div class="empty-state"><div class="empty-icon">⚠️</div><div>Could not load requests<br><small>Make sure backend is running!</small></div></div>';
+  }
+}
+
+async function loadMyPosts(){
+  const list=document.getElementById('myPostsList');
+  try{
+    const res=await fetch(API+'/api/blood/posts');
+    const data=await res.json();
+    const myPosts=(data.posts||[]).filter(p=>String(p.donor_id)===String(currentUser.id));
+    document.getElementById('myPostsBadge').textContent=myPosts.length+' Active';
+    document.getElementById('statMyPosts').textContent=myPosts.length;
+    if(myPosts.length===0){list.innerHTML='<div class="empty-state"><div class="empty-icon">📋</div><div>Post availability above!</div></div>';return;}
+    list.innerHTML=myPosts.map(p=>`
+      <div class="req-item">
+        <div class="req-blood rb-red">${p.blood_group}</div>
+        <div class="req-info">
+          <div class="req-name">${p.units} unit(s) · ${p.city||'Unknown'}</div>
+          <div class="req-meta"><span>📌 ${p.status}</span><span>🕐 ${timeAgo(p.created_at)}</span></div>
+        </div>
+        <span class="urgency-badge u-normal">✅ Live</span>
+      </div>`).join('');
+  }catch(err){list.innerHTML='<div class="empty-state"><div class="empty-icon">⚠️</div><div>Backend not running</div></div>';}
+}
+
+async function loadMedStats(){
+  try{const res=await fetch(API+'/api/medicine');const data=await res.json();document.getElementById('statMeds').textContent=data.medicines?data.medicines.length:'—';}
+  catch(e){document.getElementById('statMeds').textContent='—';}
+}
+
+async function postAvailability(){
+  const units=document.getElementById('postUnits').value;
+  const status=document.getElementById('postStatus').value;
+  const city=document.getElementById('postCity').value;
+  const phone=document.getElementById('postPhone').value;
+  const notes=document.getElementById('postNotes').value;
+  if(!selectedBg||!units){showToast('⚠️ Please select blood group and enter units!');return;}
+  const btn=document.getElementById('postBtn');
+  const text=document.getElementById('postBtnText');
+  const spin=document.getElementById('postSpin');
+  btn.disabled=true;text.style.display='none';spin.style.display='block';
+  try{
+    const res=await fetch(API+'/api/blood/posts',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({donor_id:currentUser.id,donor_name:currentUser.name,donor_phone:phone||currentUser.phone,donor_email:localStorage.getItem('email')||'',blood_group:selectedBg,units:parseInt(units),status,city,notes})});
+    const data=await res.json();
+    if(data.success){showToast('✅ Posted! Recipients can now see you on their dashboard.');document.getElementById('postNotes').value='';await loadMyPosts();await loadRequests();}
+    else showToast('❌ '+data.message);
+  }catch(err){showToast('❌ Backend not running! Start the server first.');}
+  btn.disabled=false;text.style.display='inline';spin.style.display='none';
+}
+
+async function showContact(requestId){
+  const modal=document.getElementById('contactModal');
+  const content=document.getElementById('modalContent');
+  content.innerHTML='<div style="text-align:center;padding:20px;color:var(--muted)">Loading contact details...</div>';
+  modal.classList.add('open');
+  try{
+    const res=await fetch(API+'/api/blood/recipient-contact/'+requestId);
+    const data=await res.json();
+    if(!data.success){content.innerHTML='<div style="text-align:center;padding:20px;color:red">Contact not found</div>';return;}
+    const c=data.contact;
+    const phone=c.recipient_phone||c.user_phone||'Not provided';
+    const email=c.email||'Not provided';
+    const city=c.city||c.user_city||'Not provided';
+    const urg=c.urgency||'normal';
+    const urgColors={emergency:'#FEF2F2',urgent:'#FEF3C7',normal:'#D1FAE5'};
+    const urgTextC={emergency:'#DC2626',urgent:'#D97706',normal:'#059669'};
+    content.innerHTML=`
+      <div class="urgency-pill" style="background:${urgColors[urg]};color:${urgTextC[urg]}">
+        ${urg==='emergency'?'🚨 Emergency':urg==='urgent'?'⚠️ Urgent':'✅ Normal'} · ${c.blood_group}
+      </div>
+      <div class="contact-card">
+        <div class="contact-row"><span class="contact-icon">👤</span><div><div class="contact-label">Recipient Name</div><div class="contact-val">${c.recipient_name||'Anonymous'}</div></div></div>
+        <div class="contact-row"><span class="contact-icon">📞</span><div><div class="contact-label">Phone Number</div><div class="contact-val">${phone}</div></div></div>
+        <div class="contact-row"><span class="contact-icon">✉️</span><div><div class="contact-label">Email</div><div class="contact-val">${email}</div></div></div>
+        <div class="contact-row"><span class="contact-icon">📍</span><div><div class="contact-label">Location</div><div class="contact-val">${city}</div></div></div>
+        ${c.notes?`<div class="contact-row"><span class="contact-icon">📝</span><div><div class="contact-label">Notes</div><div class="contact-val">${c.notes}</div></div></div>`:''}
+      </div>
+      ${phone!=='Not provided'?`<button class="btn-call" onclick="window.open('tel:${phone}')">📞 Call Now</button><button class="btn-whatsapp" onclick="window.open('https://wa.me/${phone.replace(/[^0-9]/g,'')}?text=Hi, I saw your blood request on LifeShare and I can help!')">💬 WhatsApp</button>`:'<p style="text-align:center;color:var(--muted);font-size:.85rem">No phone number on file</p>'}`;
+  }catch(err){content.innerHTML='<div style="text-align:center;padding:20px;color:red">Backend not running!</div>';}
+}
+
+
+// async function showContact(requestId){
+//   const modal=document.getElementById('contactModal');
+//   const content=document.getElementById('modalContent');
+//   content.innerHTML='<div style="text-align:center;padding:20px;color:var(--muted)">Loading contact details...</div>';
+//   modal.classList.add('open');
+//   try{
+//     const res=await fetch(API+'/api/blood/recipient-contact/'+requestId);
+//     const data=await res.json();
+//     if(!data.success){
+//       content.innerHTML='<div style="text-align:center;padding:20px;color:red">Contact not found</div>';
+//       return;
+//     }
+//     const c=data.contact;
+
+//     // Check if already accepted
+//     const isAccepted = c.status === 'accepted';
+
+//     const urg=c.urgency||'normal';
+//     const urgColors={emergency:'#FEF2F2',urgent:'#FEF3C7',normal:'#D1FAE5'};
+//     const urgTextC={emergency:'#DC2626',urgent:'#D97706',normal:'#059669'};
+
+//     content.innerHTML=`
+//       <div class="urgency-pill" style="background:${urgColors[urg]};color:${urgTextC[urg]}">
+//         ${urg==='emergency'?'🚨 Emergency':urg==='urgent'?'⚠️ Urgent':'✅ Normal'} · ${c.blood_group}
+//       </div>
+//       <div class="contact-card">
+//         <div class="contact-row">
+//           <span class="contact-icon">👤</span>
+//           <div><div class="contact-label">Recipient Name</div>
+//           <div class="contact-val">${c.recipient_name||'Anonymous'}</div></div>
+//         </div>
+//         <div class="contact-row">
+//           <span class="contact-icon">🩸</span>
+//           <div><div class="contact-label">Blood Group Needed</div>
+//           <div class="contact-val">${c.blood_group} · ${c.units_needed||1} unit(s)</div></div>
+//         </div>
+//         <div class="contact-row">
+//           <span class="contact-icon">📍</span>
+//           <div><div class="contact-label">Location</div>
+//           <div class="contact-val">${c.city||c.location||'Not specified'}</div></div>
+//         </div>
+//         ${c.notes?`
+//         <div class="contact-row">
+//           <span class="contact-icon">📝</span>
+//           <div><div class="contact-label">Notes</div>
+//           <div class="contact-val">${c.notes}</div></div>
+//         </div>`:''}
+//         <div class="contact-row">
+//           <span class="contact-icon">📊</span>
+//           <div><div class="contact-label">Status</div>
+//           <div class="contact-val" id="modalStatus">
+//             ${isAccepted
+//               ? '<span style="color:var(--green);font-weight:700">✅ Accepted</span>'
+//               : '<span style="color:var(--amber);font-weight:700">⏳ Pending</span>'
+//             }
+//           </div></div>
+//         </div>
+//       </div>
+//       ${isAccepted
+//         ? `<div style="background:var(--green-lt);border-radius:10px;padding:14px;text-align:center;color:var(--green);font-weight:700;font-size:.9rem">
+//             ✅ You have already accepted this request!<br>
+//             <small style="font-weight:400;margin-top:4px;display:block">The recipient has been notified.</small>
+//            </div>`
+//         : `<button class="btn-accept" id="acceptBtn-${requestId}" onclick="acceptRequest(${requestId}, this)" 
+//             style="width:100%;padding:13px;border-radius:9px;background:linear-gradient(135deg,var(--red),var(--red2));color:#fff;font-size:.95rem;font-weight:700;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;box-shadow:0 4px 14px rgba(217,43,58,.3);transition:all .25s;display:flex;align-items:center;justify-content:center;gap:9px">
+//             🩸 Accept Request
+//            </button>`
+//       }`;
+//   }catch(err){
+//     content.innerHTML='<div style="text-align:center;padding:20px;color:red">Backend not running!</div>';
+//   }
+// }
+
+
+
+// async function acceptRequest(requestId, btn){
+//   btn.disabled=true;
+//   btn.innerHTML='⏳ Accepting...';
+//   try{
+//     const res=await fetch(API+'/api/blood/requests/'+requestId+'/accept',{
+//       method:'PUT',
+//       headers:{'Content-Type':'application/json'},
+//       body:JSON.stringify({donor_id:currentUser.id})
+//     });
+//     const data=await res.json();
+//     if(data.success){
+//       // Update button to show accepted
+//       btn.style.background='linear-gradient(135deg,var(--green),#059669)';
+//       btn.innerHTML='✅ Request Accepted!';
+//       btn.disabled=true;
+
+//       // Update status in modal
+//       const statusEl=document.getElementById('modalStatus');
+//       if(statusEl) statusEl.innerHTML='<span style="color:var(--green);font-weight:700">✅ Accepted</span>';
+
+//       // Update the request item in the list
+//       updateRequestStatusInList(requestId,'accepted');
+
+//       showToast('✅ Request accepted! You can now contact the recipient.');
+//     }else{
+//       btn.disabled=false;
+//       btn.innerHTML='🩸 Accept Request';
+//       showToast('❌ '+(data.message||'Failed to accept request'));
+//     }
+//   }catch(err){
+//     btn.disabled=false;
+//     btn.innerHTML='🩸 Accept Request';
+//     showToast('❌ Backend not running!');
+//   }
+// }
+
+// function updateRequestStatusInList(requestId, status){
+//   // Find the request item in the list and update it
+//   const listItems=document.querySelectorAll('#requestsList .req-item');
+//   listItems.forEach(item=>{
+//     const btn=item.querySelector('.req-action');
+//     if(btn&&btn.getAttribute('onclick')&&btn.getAttribute('onclick').includes(requestId)){
+//       // Update the respond button to show accepted
+//       btn.textContent='✅ Accepted';
+//       btn.style.background='var(--green-lt)';
+//       btn.style.color='var(--green)';
+//       btn.style.borderColor='#6EE7B7';
+//       btn.disabled=true;
+//       btn.style.cursor='not-allowed';
+//     }
+//   });
+// }
+
+
+
+
+
+
+
+function selBg(el,bg){document.querySelectorAll('.bg-btn').forEach(b=>b.classList.remove('sel'));el.classList.add('sel');selectedBg=bg;}
+function scrollToPost(){document.getElementById('postSection').scrollIntoView({behavior:'smooth'});}
+function closeModal(){document.getElementById('contactModal').classList.remove('open');}
+function toggleAvail(cb){document.getElementById('availText').textContent=cb.checked?'🟢 Available':'🔴 Unavailable';showToast(cb.checked?'🟢 You are now Available!':'🔴 You are now Unavailable.');}
+function doLogout(){localStorage.clear();window.location.href='login.html';}
+function showToast(msg){const t=document.getElementById('toast');document.getElementById('toastText').textContent=msg;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),4000);}
+function hideToast(){document.getElementById('toast').classList.remove('show');}
+function timeAgo(d){if(!d)return'Just now';const diff=Date.now()-new Date(d).getTime();const m=Math.floor(diff/60000),h=Math.floor(diff/3600000),dy=Math.floor(diff/86400000);if(dy>0)return dy+'d ago';if(h>0)return h+'h ago';if(m>0)return m+'m ago';return'Just now';}
+document.getElementById('contactModal').addEventListener('click',function(e){if(e.target===this)closeModal();});
+</script>
+</body>
+</html>

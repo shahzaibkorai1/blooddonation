@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+<title>LifeShare — Blood & Medicine Community Platform</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<!-- <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/> -->
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --red:#D92B3A;
+  --red2:#FF4D5E;
+  --red-dk:#A81828;
+  --red-lt:#FFF0F1;
+  --teal:#0D9488;
+  --teal-lt:#CCFBF1;
+  --ink:#0F172A;
+  --slate:#334155;
+  --muted:#64748B;
+  --ghost:#F8FAFC;
+  --border:#E2E8F0;
+  --white:#fff;
+  --cream:#FFF8F5;
+  --shadow-lg:0 24px 64px rgba(15,23,42,0.12);
+  --shadow-md:0 8px 32px rgba(15,23,42,0.08);
+  --shadow-sm:0 2px 12px rgba(15,23,42,0.06);
+}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;color:var(--ink);background:#fff;overflow-x:hidden;margin:0;padding:0}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-thumb{background:var(--red);border-radius:99px}
+
+/* NAVBAR */
+.main-navbar{
+  position:fixed;top:0;left:0;right:0;z-index:9999;height:70px;padding:0 5%;
+  display:flex;align-items:center;justify-content:space-between;
+  background:rgba(15,23,42,0.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(255,255,255,0.08);transition:all 0.3s ease;
+}
+.main-navbar.scrolled{background:rgba(15,23,42,0.97);box-shadow:0 4px 32px rgba(0,0,0,0.3)}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0}
+.nav-logo img{height:42px;width:auto;border-radius:8px;object-fit:contain}
+.nav-logo-text{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;color:#fff;letter-spacing:-0.02em}
+.nav-logo-text span{color:var(--red2)}
+.nav-links{display:flex;gap:32px;list-style:none;margin:0;padding:0;position:absolute;left:50%;transform:translateX(-50%)}
+.nav-links li a{text-decoration:none;color:rgb(255,254,254);font-weight:600;font-size:0.91rem;letter-spacing:0.01em;transition:all .2s;padding:4px 0;position:relative}
+.nav-links li a::after{content:'';position:absolute;bottom:-2px;left:0;right:100%;height:1.5px;background:var(--red2);transition:right 0.3s ease}
+.nav-links li a:hover{color:#fff}
+.nav-links li a:hover::after{right:0}
+.nav-buttons{display:flex;gap:10px;flex-shrink:0}
+.nav-btn{font-family:'DM Sans',sans-serif;font-weight:600;cursor:pointer;border:none;transition:all .25s;border-radius:8px;font-size:0.87rem;padding:8px 20px;letter-spacing:0.02em}
+.nav-btn-login{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.18);color:rgba(255,255,255,0.9)}
+.nav-btn-login:hover{background:rgba(255,255,255,0.15);color:#fff}
+.nav-btn-signup{background:linear-gradient(135deg,var(--red),var(--red2));color:#fff;box-shadow:0 4px 14px rgba(217,43,58,0.4)}
+.nav-btn-signup:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(217,43,58,0.5)}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:4px}
+.hamburger span{display:block;width:22px;height:2px;background:rgba(255,255,255,0.8);border-radius:2px;transition:all 0.3s}
+.mobile-menu{display:none;position:fixed;top:70px;left:0;right:0;background:rgba(15,23,42,0.98);backdrop-filter:blur(20px);padding:24px 5%;z-index:9998;border-bottom:1px solid rgba(255,255,255,0.08);flex-direction:column;gap:16px}
+.mobile-menu.open{display:flex}
+.mobile-menu a{color:rgba(255,255,255,0.8);text-decoration:none;font-size:1rem;font-weight:500;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.06)}
+.mobile-menu-btns{display:flex;gap:10px;margin-top:8px}
+.mobile-menu-btns button{flex:1;padding:11px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:600;cursor:pointer;border:none}
+
+/* ══════════════════════════════
+   HERO SECTION — REDESIGNED
+   Full-screen bg image, text centered
+══════════════════════════════ */
+.hero{
+  position:relative;
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  padding-top:70px;
+}
+
+/* Background image */
+.hero-bg-img{
+  position:absolute;
+  inset:0;
+  background:url('https://images.unsplash.com/photo-1615461066841-6116e61058f4?w=1920&q=80') center/cover no-repeat;
+  z-index:0;
+}
+
+/* Dark overlay so text is readable */
+.hero-bg-overlay{
+  position:absolute;
+  inset:0;
+  background:linear-gradient(
+    to bottom,
+    rgba(10,14,26,0.72) 0%,
+    rgba(10,14,26,0.65) 50%,
+    rgba(10,14,26,0.78) 100%
+  );
+  z-index:1;
+}
+
+/* Red tint accent at bottom */
+.hero-bg-tint{
+  position:absolute;
+  inset:0;
+  background:radial-gradient(ellipse at 50% 100%, rgba(255, 255, 255, 0.18) 0%, transparent 65%);
+  z-index:2;
+}
+
+/* Center content */
+.hero-center{
+  position:relative;
+  z-index:10;
+  text-align:center;
+  max-width:720px;
+  padding:0 24px;
+  animation:heroFadeUp 1s ease both;
+}
+@keyframes heroFadeUp{
+  from{opacity:0;transform:translateY(36px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* Badge */
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(217,43,58,0.18);
+  border:1px solid rgba(217,43,58,0.45);
+  color:#FF8A94;
+  padding:7px 18px;border-radius:99px;
+  font-size:.76rem;font-weight:600;
+  margin-bottom:28px;
+  letter-spacing:0.06em;text-transform:uppercase;
+  animation:heroFadeUp 1s ease 0.1s both;
+}
+/* .pulse-dot{
+  width:7px;height:7px;border-radius:50%;
+  background:#FF8A94;
+  animation:pulse 1.8s ease-in-out infinite;
+} */
+@keyframes pulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(255,138,148,0.5)}
+  50%{box-shadow:0 0 0 6px rgba(255,138,148,0)}
+}
+
+/* Title */
+.hero-title{
+font-family: 'Poppins', sans-serif;
+font-weight: 700; /* or 800 */
+  /* font-family:'Playfair Display','Times New Roman', Times, serif; */
+  font-size:clamp(2.4rem,5.4vw,4.0rem);
+  line-height:0.8;
+  font-weight:700;
+  color:#fff;
+  margin-bottom:22px;
+  animation:heroFadeUp 1s ease 0.2s both;
+}
+.hero-title .accent{
+  color:var(--red2);
+  /* font-style:italic; */
+}
+
+/* Description */
+.hero-desc{
+  font-size:1.0rem;
+  color:rgba(255,255,255,0.72);
+  line-height:1.3;
+  max-width:560px;
+  margin:0 auto 36px;
+  animation:heroFadeUp 1s ease 0.3s both;
+}
+
+/* Buttons */
+.hero-actions{
+  display:flex;
+  gap:14px;
+  justify-content:center;
+  flex-wrap:wrap;
+  margin-bottom:52px;
+  animation:heroFadeUp 1s ease 0.4s both;
+}
+.btn-primary-hero{
+  background:linear-gradient(135deg,var(--red),var(--red2));
+  color:#fff;padding:15px 34px;border-radius:10px;
+  font-size:.97rem;font-weight:700;border:none;cursor:pointer;
+  font-family:'DM Sans',sans-serif;
+  box-shadow:0 6px 22px rgba(217,43,58,0.45);
+  transition:all .25s;display:flex;align-items:center;gap:8px;
+}
+.btn-primary-hero:hover{transform:translateY(-3px);box-shadow:0 10px 30px rgba(217,43,58,0.55)}
+.btn-secondary-hero{
+  background:rgba(255,255,255,0.1);color:#fff;
+  padding:15px 34px;border-radius:10px;
+  font-size:.97rem;font-weight:600;
+  border:1.5px solid rgba(255,255,255,0.3);
+  cursor:pointer;font-family:'DM Sans',sans-serif;
+  backdrop-filter:blur(8px);
+  transition:all .25s;display:flex;align-items:center;gap:8px;
+}
+.btn-secondary-hero:hover{background:rgba(255,255,255,0.18);border-color:rgba(255,255,255,0.55);transform:translateY(-2px)}
+
+/* Stats */
+.hero-stats{
+  display:flex;gap:0;justify-content:center;
+  animation:heroFadeUp 1s ease 0.5s both;
+}
+.stat-item{
+  padding:0 32px;
+  border-right:1px solid rgba(255,255,255,0.15);
+}
+.stat-item:last-child{border-right:none}
+.stat-num{
+  font-family:'Playfair Display',serif;
+  font-size:1.9rem;font-weight:900;line-height:1;color:#fff;
+}
+.stat-num sup{font-size:.9rem;color:var(--red2)}
+.stat-label{font-size:.73rem;color:rgba(255,255,255,0.5);margin-top:4px;font-weight:500;text-transform:uppercase;letter-spacing:0.06em}
+
+/* Scroll indicator */
+.hero-scroll{
+  position:absolute;bottom:32px;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:7px;
+  z-index:10;cursor:pointer;
+  animation:heroFadeUp 1s ease 0.8s both;
+}
+.hero-scroll-txt{font-size:.68rem;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:.1em}
+.hero-scroll-line{width:1px;height:36px;background:linear-gradient(to bottom,rgba(255,255,255,0.4),transparent);animation:scrollPulse 1.5s ease-in-out infinite}
+@keyframes scrollPulse{0%,100%{opacity:1}50%{opacity:0.3}}
+
+/* ══ TRUST BAR ══ */
+.trust-bar{background:var(--ink);padding:18px 5%;display:flex;align-items:center;justify-content:center;gap:40px;flex-wrap:wrap}
+.trust-item{display:flex;align-items:center;gap:8px;color:rgba(255,255,255,0.65);font-size:.83rem;font-weight:500}
+.trust-icon{font-size:1rem}
+.trust-sep{width:1px;height:20px;background:rgba(255,255,255,0.12)}
+
+/* ══ SECTION COMMONS ══ */
+.section-tag{display:inline-flex;align-items:center;gap:6px;font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:5px 13px;border-radius:99px;margin-bottom:12px}
+.tag-red{background:#FEE2E2;color:var(--red)}
+.tag-teal{background:var(--teal-lt);color:var(--teal)}
+.tag-blue{background:#DBEAFE;color:#1D4ED8}
+.section-heading{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,2.8vw,2.6rem);font-weight:900;line-height:1.2;margin-bottom:14px}
+.section-sub{font-size:.97rem;color:var(--muted);line-height:1.75;max-width:500px}
+
+/* ══ BLOOD SECTION ══ */
+.blood-section{padding:100px 5%;background:var(--cream);display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center}
+.blood-visual{position:relative;padding:30px 30px 50px 0}
+.blood-main-img{width:100%;height:460px;border-radius:20px;box-shadow:var(--shadow-lg);background:url('https://images.unsplash.com/photo-1536856136534-bb679c52a9aa?w=800&auto=format&fit=crop&q=80') center/cover no-repeat;position:relative}
+.blood-overlay-card{position:absolute;bottom:-20px;right:-20px;background:#fff;border-radius:14px;padding:18px 20px;box-shadow:0 12px 40px rgba(0,0,0,0.12);min-width:190px}
+.boc-title{font-size:.7rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px}
+.blood-types{display:flex;gap:7px;flex-wrap:wrap}
+.bt{width:40px;height:40px;border-radius:9px;display:grid;place-items:center;font-weight:700;font-size:.78rem;cursor:default;transition:transform .2s}
+.bt:hover{transform:scale(1.12)}
+.bt-fill{background:var(--red);color:#fff}
+.bt-out{background:#FEE2E2;color:var(--red)}
+.blood-stat-card{position:absolute;top:-16px;left:-16px;background:linear-gradient(135deg,var(--red),var(--red2));color:#fff;border-radius:14px;padding:16px 20px;box-shadow:0 8px 28px rgba(217,43,58,0.4)}
+.bsc-num{font-family:'Playfair Display',serif;font-size:1.9rem;font-weight:900}
+.bsc-label{font-size:.74rem;opacity:.85;margin-top:2px}
+.blood-steps{margin-top:32px;display:flex;flex-direction:column;gap:18px}
+.bstep{display:flex;gap:14px;align-items:flex-start}
+.bstep-num{min-width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,var(--red),var(--red2));color:#fff;display:grid;place-items:center;font-weight:700;font-size:.88rem;box-shadow:0 4px 12px rgba(217,43,58,0.3);flex-shrink:0}
+.bstep-text h4{font-weight:600;font-size:.92rem;margin-bottom:3px}
+.bstep-text p{font-size:.84rem;color:var(--muted);line-height:1.6}
+.btn-action{margin-top:32px;background:linear-gradient(135deg,var(--red),var(--red2));color:#fff;padding:13px 30px;border-radius:10px;font-size:.92rem;font-weight:600;box-shadow:0 4px 16px rgba(217,43,58,0.3);display:inline-flex;align-items:center;gap:8px;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;transition:all .25s}
+.btn-action:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(217,43,58,0.4)}
+.btn-outline{margin-top:28px;background:#fff;color:var(--red);padding:13px 30px;border-radius:10px;font-size:.92rem;font-weight:600;border:2px solid var(--red);display:inline-flex;align-items:center;gap:8px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .25s}
+.btn-outline:hover{background:var(--red);color:#fff;transform:translateY(-2px)}
+
+/* ══ RECIPIENT SECTION ══ */
+.recipient-section{padding:100px 5%;background:#fff;display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center}
+.recipient-content{order:1}
+.recipient-visual{order:2;position:relative;padding:30px 0 50px 30px}
+.recipient-main-img{width:100%;height:460px;border-radius:20px;box-shadow:var(--shadow-lg);background:url('images/4.jpg') center/cover no-repeat}
+.urgency-card{position:absolute;bottom:-20px;left:-20px;background:#fff;border-radius:14px;padding:16px 20px;box-shadow:0 12px 40px rgba(0,0,0,0.12);min-width:200px}
+.uc-title{font-size:.7rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px}
+.urgency-list{display:flex;flex-direction:column;gap:8px}
+.urgency-item{display:flex;align-items:center;gap:8px}
+.urgency-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.u-red{background:#EF4444}.u-yellow{background:#F59E0B}.u-green{background:#10B981}
+.urgency-name{font-size:.83rem;font-weight:500}
+.urgency-count{margin-left:auto;font-size:.76rem;color:var(--muted);font-weight:500}
+.map-badge{position:absolute;top:-16px;right:-16px;background:var(--ink);color:#fff;border-radius:14px;padding:16px 20px;box-shadow:var(--shadow-md)}
+.mb-icon{font-size:1.6rem;margin-bottom:5px}
+.mb-text{font-size:.8rem;font-weight:600}
+.mb-sub{font-size:.7rem;color:rgba(255,255,255,.55);margin-top:2px}
+.request-features{margin-top:28px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.rf-item{background:var(--ghost);border-radius:11px;padding:14px;border:1px solid var(--border);transition:all .2s}
+.rf-item:hover{border-color:var(--red);background:#FFF8F8;transform:translateY(-2px)}
+.rf-icon{font-size:1.3rem;margin-bottom:7px}
+.rf-title{font-weight:600;font-size:.86rem;margin-bottom:3px}
+.rf-desc{font-size:.78rem;color:var(--muted);line-height:1.5}
+
+/* ══ MEDICINE SECTION ══ */
+.medicine-section{padding:100px 5%;background:linear-gradient(160deg,#0F172A 0%,#1A2744 100%);position:relative;overflow:hidden}
+.medicine-section::before{content:'';position:absolute;top:-100px;right:-80px;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(13,148,136,.12),transparent 60%)}
+.medicine-section::after{content:'';position:absolute;bottom:-80px;left:-60px;width:380px;height:380px;border-radius:50%;background:radial-gradient(circle,rgba(217,43,58,.08),transparent 60%)}
+.med-top{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:52px;flex-wrap:wrap;gap:20px;position:relative;z-index:1}
+.med-top .section-heading{color:#fff}
+.med-top .section-sub{color:rgba(255,255,255,.55)}
+.btn-teal-action{background:var(--teal);color:#fff;padding:11px 26px;border-radius:10px;font-size:.9rem;font-weight:600;white-space:nowrap;box-shadow:0 4px 16px rgba(13,148,136,.35);cursor:pointer;border:none;font-family:'DM Sans',sans-serif;transition:all .25s}
+.btn-teal-action:hover{background:#0F766E;transform:translateY(-2px)}
+.med-grid{display:grid;grid-template-columns:2fr 1fr 1fr;grid-template-rows:auto auto;gap:16px;position:relative;z-index:1}
+.med-card{border-radius:18px;overflow:hidden;position:relative}
+.med-big{grid-row:1/3}
+.med-img-1{height:100%;min-height:440px;background:url('https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=700&auto=format&fit=crop&q=80') center/cover no-repeat}
+.med-img-2{height:190px;background:url('https://images.unsplash.com/photo-1471864190281-a93a3070b6de?w=600&auto=format&fit=crop&q=80') center/cover no-repeat}
+.med-img-3{height:190px;background:url('https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=600&auto=format&fit=crop&q=80') center/cover no-repeat}
+.med-info-card{height:210px;background:linear-gradient(135deg,var(--teal),#0F766E);display:flex;flex-direction:column;justify-content:center;padding:26px}
+.med-info-4{height:210px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;justify-content:center;padding:26px}
+.med-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(15,23,42,.85) 0%,rgba(15,23,42,0) 55%);display:flex;flex-direction:column;justify-content:flex-end;padding:22px}
+.med-tag{background:var(--teal);color:#fff;font-size:.7rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 9px;border-radius:5px;width:fit-content;margin-bottom:8px}
+.med-name{color:#fff;font-weight:700;font-size:1rem;margin-bottom:3px}
+.med-meta{color:rgba(255,255,255,.6);font-size:.78rem;display:flex;gap:12px;flex-wrap:wrap}
+.med-ic-num{font-family:'Playfair Display',serif;font-size:2rem;font-weight:900;color:#fff;line-height:1}
+.med-ic-label{color:rgba(255,255,255,.7);font-size:.8rem;margin-top:5px}
+.med-features-list{display:flex;flex-direction:column;gap:9px}
+.mfl-item{display:flex;align-items:center;gap:9px;color:rgba(255,255,255,.75);font-size:.83rem}
+.mfl-check{width:20px;height:20px;border-radius:5px;background:rgba(255,255,255,.1);display:grid;place-items:center;font-size:.68rem;color:var(--teal);flex-shrink:0}
+.med-how{position:relative;z-index:1;margin-top:44px;display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:rgba(255,255,255,.06);border-radius:14px;overflow:hidden}
+.mhow-step{background:rgba(255,255,255,.03);padding:24px 20px;text-align:center;transition:background .25s}
+.mhow-step:hover{background:rgba(255,255,255,.07)}
+.mhow-icon{font-size:1.8rem;margin-bottom:10px}
+.mhow-title{color:#fff;font-weight:600;font-size:.88rem;margin-bottom:5px}
+.mhow-desc{color:rgba(255,255,255,.45);font-size:.77rem;line-height:1.5}
+
+/* ══ HOW IT WORKS ══ */
+.hiw-section{padding:100px 5%;background:var(--ghost);text-align:center}
+.hiw-section .section-sub{margin:0 auto 52px}
+.hiw-track{display:grid;grid-template-columns:repeat(4,1fr);gap:0;position:relative;max-width:900px;margin:0 auto}
+.hiw-track::before{content:'';position:absolute;top:34px;left:12.5%;right:12.5%;height:2px;background:linear-gradient(90deg,var(--red),var(--red2));z-index:0}
+.hiw-step{position:relative;z-index:1;padding:0 14px;display:flex;flex-direction:column;align-items:center}
+.hiw-circle{width:68px;height:68px;border-radius:50%;background:#fff;border:2.5px solid var(--red);display:grid;place-items:center;font-size:1.5rem;margin-bottom:18px;box-shadow:0 4px 14px rgba(217,43,58,0.18);transition:transform .25s}
+.hiw-step:hover .hiw-circle{transform:scale(1.1)}
+.hiw-num{font-family:'Playfair Display',serif;font-size:.72rem;font-weight:900;color:var(--red);margin-bottom:7px;letter-spacing:.08em}
+.hiw-title{font-weight:700;font-size:.92rem;margin-bottom:5px}
+.hiw-desc{font-size:.8rem;color:var(--muted);line-height:1.6}
+
+/* ══ TESTIMONIALS ══ */
+.testi-section{padding:100px 5%;background:#fff}
+.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:1100px;margin:36px auto 0}
+.testi-card{background:var(--ghost);border-radius:18px;padding:26px;border:1px solid var(--border);transition:all .25s;position:relative}
+.testi-card::before{content:'❝';position:absolute;top:18px;right:22px;font-size:2rem;color:#FEE2E2;font-family:serif}
+.testi-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-md);border-color:#FED7D7}
+.testi-stars{color:#F59E0B;font-size:.9rem;letter-spacing:2px;margin-bottom:12px}
+.testi-text{font-size:.88rem;color:var(--slate);line-height:1.75;margin-bottom:18px}
+.testi-author{display:flex;align-items:center;gap:10px}
+.testi-avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--red),var(--red2));display:grid;place-items:center;color:#fff;font-weight:700;font-size:.85rem;flex-shrink:0}
+.testi-name{font-weight:600;font-size:.88rem}
+.testi-role{font-size:.75rem;color:var(--muted)}
+
+/* ══ CTA ══ */
+.cta-section{padding:100px 6%;background:url('https://images.unsplash.com/photo-1582719471384-894fbb16e074?w=1600&auto=format&fit=crop&q=80') center/cover no-repeat;position:relative;text-align:center}
+.cta-section::before{content:'';position:absolute;inset:0;background:rgba(15,23,42,.82)}
+/* .cta-section{padding:100px 5%;background:linear-gradient(135deg,#0F172A 0%,#1E293B 50%,#0F172A 100%);position:relative;text-align:center;overflow:hidden} */
+/* .cta-section::before{content:'';position:absolute;top:-60px;left:50%;transform:translateX(-50%);width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(217,43,58,.12),transparent 60%);pointer-events:none} */
+.cta-inner{position:relative;z-index:1;max-width:600px;margin:0 auto}
+.cta-inner h2{font-family:'Playfair Display',serif;font-size:clamp(1.9rem,3.5vw,2.8rem);font-weight:900;color:#fff;margin-bottom:14px;line-height:1.2}
+.cta-inner p{color:rgba(255,255,255,.65);font-size:.97rem;line-height:1.75;margin-bottom:36px}
+.cta-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.btn-cta-main{background:linear-gradient(135deg,var(--red),var(--red2));color:#fff;padding:14px 32px;border-radius:10px;font-size:.95rem;font-weight:700;box-shadow:0 6px 22px rgba(217,43,58,.4);cursor:pointer;border:none;font-family:'DM Sans',sans-serif;transition:all .25s}
+.btn-cta-main:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(217,43,58,.5)}
+.btn-cta-sec{background:rgba(255,255,255,.08);color:#fff;padding:14px 32px;border-radius:10px;font-size:.95rem;font-weight:700;border:1.5px solid rgba(255,255,255,.2);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .25s}
+.btn-cta-sec:hover{background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.4);transform:translateY(-2px)}
+
+/* ══ CONTACT ══ */
+.contact-section{padding:80px 5%;background:var(--cream);text-align:center}
+.contact-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:860px;margin:36px auto 0}
+.contact-card{background:#fff;border-radius:16px;padding:26px;border:1px solid var(--border);text-align:center;transition:all .25s;cursor:default}
+.contact-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-md);border-color:#FED7D7}
+.contact-icon{font-size:2rem;margin-bottom:10px}
+.contact-title{font-weight:700;font-size:.95rem;margin-bottom:5px}
+.contact-info{color:var(--muted);font-size:.85rem}
+
+/* ══ FOOTER ══ */
+.site-footer{background:#0A0F1E;color:rgba(255,255,255,0.5);padding:60px 5% 32px}
+.footer-top{display:grid;grid-template-columns:1.8fr 1fr 1fr 1fr;gap:48px;margin-bottom:48px;padding-bottom:40px;border-bottom:1px solid rgba(255,255,255,0.07)}
+.footer-logo-text{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:900;color:#fff;margin-bottom:12px}
+.footer-logo-text span{color:var(--red2)}
+.footer-tagline{font-size:.85rem;color:rgba(255,255,255,.45);line-height:1.7;max-width:240px;margin-bottom:20px}
+.footer-social{display:flex;gap:30px;}
+.social-btn{width:34px;height:34px;border-radius:8px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);display:grid;place-items:center;font-size:.95rem;cursor:pointer;transition:all .2s;text-decoration:none}
+.social-btn:hover{background:rgba(217,43,58,.2);border-color:rgba(217,43,58,.4)}
+.footer-col-title{font-size:.8rem;font-weight:bold;text-transform:uppercase;letter-spacing:.12em;color:white;margin-bottom:16px}
+.footer-links-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.footer-links-list a{color:rgba(255,255,255,.5);text-decoration:none;font-size:.85rem;transition:color .2s}
+.footer-links-list a:hover{color:#fff}
+.footer-bottom{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.footer-copy{font-size:.78rem;color:rgba(255,255,255,.3)}
+.footer-bottom-links{display:flex;gap:20px;list-style:none;margin:0;padding:0}
+.footer-bottom-links a{color:rgba(255,255,255,.3);text-decoration:none;font-size:.78rem;transition:color .2s}
+.footer-bottom-links a:hover{color:rgba(255,255,255,.6)}
+.footer-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(217,43,58,.12);border:1px solid rgba(217,43,58,.2);color:rgba(255,100,100,.8);padding:4px 12px;border-radius:99px;font-size:.72rem;font-weight:600}
+
+
+/* ══ RESPONSIVE ══ */
+@media(max-width:1024px){.footer-top{grid-template-columns:1fr 1fr;gap:32px}}
+@media(max-width:900px){
+  .blood-section,.recipient-section{grid-template-columns:1fr;gap:44px}
+  .recipient-visual{order:0;padding:20px 0 40px 0}
+  .blood-visual{padding:20px 0 40px 0}
+  .blood-overlay-card{right:0}.blood-stat-card{left:0}.map-badge{right:0}.urgency-card{left:0}
+  .med-grid{grid-template-columns:1fr 1fr;grid-template-rows:auto}.med-big{grid-row:auto}.med-img-1{min-height:240px}
+  .med-how{grid-template-columns:1fr 1fr}
+  .hiw-track{grid-template-columns:1fr 1fr}.hiw-track::before{display:none}
+  .testi-grid{grid-template-columns:1fr}
+  .nav-links{display:none}.hamburger{display:flex}
+  .contact-grid{grid-template-columns:1fr}
+  .footer-top{grid-template-columns:1fr 1fr}
+}
+@media(max-width:600px){
+  .main-navbar{padding:0 4%}
+  .hero-title{font-size:clamp(2rem,8vw,3rem)}
+  .hero-actions{flex-direction:column;align-items:center}
+  .hero-stats{gap:0}
+  .stat-item{padding:0 18px}
+  .blood-section,.recipient-section,.medicine-section,.hiw-section,.testi-section,.cta-section,.contact-section{padding:72px 4%}
+  .med-grid{grid-template-columns:1fr}.request-features{grid-template-columns:1fr}
+  .med-how{grid-template-columns:1fr}.hiw-track{grid-template-columns:1fr}
+  .cta-btns{flex-direction:column}.btn-cta-main,.btn-cta-sec{width:100%;text-align:center}
+  .footer-top{grid-template-columns:1fr;gap:28px}.footer-bottom{flex-direction:column;text-align:center}
+  .trust-bar{gap:20px;padding:16px 4%}.trust-sep{display:none}
+}
+
+.fade-up{opacity:0;transform:translateY(28px);transition:opacity .65s ease,transform .65s ease}
+.fade-up.visible{opacity:1;transform:translateY(0)}
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="main-navbar" id="navbar">
+  <a href="index.html" class="nav-logo">
+    <span class="nav-logo-text">Life<span>Share</span></span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="#blood">About Us</a></li>
+    <li><a href="#how">How It Works</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <div class="nav-buttons">
+    <button class="nav-btn nav-btn-login" id="btnLogin">Log In</button>
+    <button class="nav-btn nav-btn-signup" id="btnSignup">Sign Up</button>
+  </div>
+  <button class="hamburger" id="hamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="index.html" onclick="closeMobile()">🏠 Home</a>
+  <a href="#blood" onclick="closeMobile()">🩸 About Us</a>
+  <a href="#how" onclick="closeMobile()">💡 How It Works</a>
+  <a href="#contact" onclick="closeMobile()">📞 Contact</a>
+  <div class="mobile-menu-btns">
+    <button style="background:rgba(255,255,255,0.08);color:#fff;border:1px solid rgba(255,255,255,0.2)" onclick="window.location.href='login.html'">Log In</button>
+    <button style="background:var(--red);color:#fff" onclick="window.location.href='register.html'">Sign Up</button>
+  </div>
+</div>
+
+<!-- ══ HERO — REDESIGNED ══ -->
+<section class="hero">
+  <!-- Background image -->
+  <div class="hero-bg-img"></div>
+  <!-- Dark overlay -->
+  <div class="hero-bg-overlay"></div>
+  <!-- Red tint -->
+  <div class="hero-bg-tint"></div>
+
+  <!-- Centered content -->
+  <div class="hero-center">
+    <div class="hero-badge">
+      <!-- <div class="pulse-dot"></div> -->
+      <!-- Live Platform &nbsp;·&nbsp; Pakistan -->
+    </div>
+
+    <h1 class="hero-title">
+      Save Lives with<br>
+      <span class="accent">Blood</span> & Medicine Sharing
+    </h1>
+
+    <p class="hero-desc">
+      A smart community platform connecting blood donors, recipients,
+      hospitals 
+      <!-- &amp; NGOs — with real-time GPS matching and  -->
+      instant emergency alerts.
+    </p>
+
+    <div class="hero-actions">
+      <button class="btn-primary-hero" id="btnDonor">🩸 Become a Donor</button>
+      <button class="btn-secondary-hero" id="btnRequest">🔍 Find Blood</button>
+    </div>
+
+    <div class="hero-stats">
+      <div class="stat-item">
+        <div class="stat-num">1K<sup>+</sup></div>
+        <div class="stat-label">Active Donors</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">500<sup>+</sup></div>
+        <div class="stat-label">Lives Saved</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">8</div>
+        <div class="stat-label">Blood Groups</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scroll indicator -->
+  <div class="hero-scroll" onclick="document.getElementById('blood').scrollIntoView({behavior:'smooth'})">
+    <!-- <div class="hero-scroll-txt">Scroll</div> -->
+    <div class="hero-scroll-line"></div>
+  </div>
+</section>
+
+<!-- ══ TRUST BAR ══ -->
+<div class="trust-bar">
+  <div class="trust-item"><span class="trust-icon">✓</span> Verified Donors</div>
+  <div class="trust-sep"></div>
+  <div class="trust-item"><span class="trust-icon">📍</span> GPS Location Matching</div>
+  <div class="trust-sep"></div>
+  <div class="trust-item"><span class="trust-icon">🔔</span> Real-Time Notifications</div>
+  <div class="trust-sep"></div>
+  <div class="trust-item"><span class="trust-icon">🏥</span> Hospital Verified</div>
+  <div class="trust-sep"></div>
+  <div class="trust-item"><span class="trust-icon">🔒</span> Secure & Private</div>
+</div>
+
+<!-- ══ BLOOD SECTION ══ -->
+<section class="blood-section fade-up" id="blood">
+  <div class="blood-visual">
+    <div class="blood-stat-card"><div class="bsc-num">98%</div><div class="bsc-label">Match Success Rate</div></div>
+    <div class="blood-main-img"></div>
+    <div class="blood-overlay-card">
+      <div class="boc-title">All Blood Types Covered</div>
+      <div class="blood-types">
+        <div class="bt bt-fill">A+</div><div class="bt bt-fill">O+</div>
+        <div class="bt bt-out">B+</div><div class="bt bt-out">AB+</div>
+        <div class="bt bt-fill">A−</div><div class="bt bt-out">O−</div>
+        <div class="bt bt-fill">B−</div><div class="bt bt-out">AB−</div>
+      </div>
+    </div>
+  </div>
+  <div class="blood-content">
+    <span class="section-tag tag-red">🩸 Blood Donation</span>
+    <h2 class="section-heading">Be a Hero.<br>Donate Blood Today.</h2>
+    <p class="section-sub">Every 2 seconds someone needs blood. Register as a donor, post your availability, and get matched with recipients nearby — all in minutes.</p>
+    <div class="blood-steps">
+      <div class="bstep"><div class="bstep-num">01</div><div class="bstep-text"><h4>Create Your Donor Profile</h4></div></div>
+      <div class="bstep"><div class="bstep-num">02</div><div class="bstep-text"><h4>Post Your Availability</h4></div></div>
+      <div class="bstep"><div class="bstep-num">03</div><div class="bstep-text"><h4>Get Matched Instantly</h4></div></div>
+      <div class="bstep"><div class="bstep-num">04</div><div class="bstep-text"><h4>Save a Life</h4></div></div>
+    </div>
+    <button class="btn-action" id="btnRegisterDonor">Register as Donor  →</button>
+  </div>
+</section>
+
+<!-- ══ RECIPIENT SECTION ══ -->
+<section class="recipient-section fade-up" id="recipient">
+  <div class="recipient-content">
+    <span class="section-tag tag-blue">🤲 For Recipients</span>
+    <h2 class="section-heading">Need Blood?<br>Find Donors Near You.</h2>
+    <p class="section-sub">Submit a blood request in seconds. Specify urgency, blood group, and location — we'll instantly alert nearby donors and hospitals.</p>
+    <div class="request-features">
+      <div class="rf-item"><div class="rf-icon">🆘</div><div class="rf-title">Emergency Mode</div><div class="rf-desc">Mark requests as emergency for highest priority alerts.</div></div>
+      <div class="rf-item"><div class="rf-icon">🗺️</div><div class="rf-title">Map View</div><div class="rf-desc">See all nearby donors plotted live on an interactive map.</div></div>
+      <div class="rf-item"><div class="rf-icon">💬</div><div class="rf-title">Direct Contact</div><div class="rf-desc">Connect directly with matched donors or verified hospitals.</div></div>
+      <div class="rf-item"><div class="rf-icon">✅</div><div class="rf-title">Verified Donors</div><div class="rf-desc">Hospital-verified donors carry a trust badge for safety.</div></div>
+    </div>
+    <button class="btn-outline" id="btnRequestBlood">Request Blood Now →</button>
+  </div>
+  <div class="recipient-visual">
+    <div class="map-badge"><div class="mb-icon">📍</div><div class="mb-text">12 Donors Found</div><div class="mb-sub">within 5 km radius</div></div>
+    <div class="recipient-main-img"></div>
+    <div class="urgency-card">
+      <div class="uc-title">Active Requests</div>
+      <div class="urgency-list">
+        <div class="urgency-item"><div class="urgency-dot u-red"></div><div class="urgency-name">Emergency</div><div class="urgency-count">3 active</div></div>
+        <div class="urgency-item"><div class="urgency-dot u-yellow"></div><div class="urgency-name">Urgent</div><div class="urgency-count">8 active</div></div>
+        <div class="urgency-item"><div class="urgency-dot u-green"></div><div class="urgency-name">Normal</div><div class="urgency-count">21 active</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ MEDICINE SECTION ══ -->
+<section class="medicine-section fade-up" id="medicine">
+  <div class="med-top">
+    <div>
+      <span class="section-tag tag-teal">💊 Medicine Sharing</span>
+      <h2 class="section-heading" style="color:#fff">Share Medicines.<br>Reduce Waste. Help Others.</h2>
+      <p class="section-sub">Unused medicines that are still safe can save lives. List yours — or find what you need nearby.</p>
+    </div>
+    <button class="btn-teal-action" id="btnMedicines">Browse Medicines →</button>
+  </div>
+  <div class="med-grid">
+    <div class="med-card med-big med-img-1"><div class="med-overlay"><div class="med-tag">Featured</div><div class="med-name">Community Medicine Bank</div><div class="med-meta"><span>📍 Lahore</span><span>💊 120+ listings</span><span>✅ Verified</span></div></div></div>
+    <div class="med-card med-img-2"><div class="med-overlay"><div class="med-name">Prescription Medicines</div><div class="med-meta"><span>48 available</span></div></div></div>
+    <div class="med-card med-info-card"><div class="med-ic-num">2,400+</div><div class="med-ic-label">Medicines Shared<br>This Month</div></div>
+    <div class="med-card med-img-3"><div class="med-overlay"><div class="med-name">Over-the-Counter</div><div class="med-meta"><span>72 available</span></div></div></div>
+    <div class="med-card med-info-4"><div class="med-features-list"><div class="mfl-item"><div class="mfl-check">✓</div>Expiry date validation</div><div class="mfl-item"><div class="mfl-check">✓</div>Barcode scan support</div><div class="mfl-item"><div class="mfl-check">✓</div>30/14/7 day reminders</div><div class="mfl-item"><div class="mfl-check">✓</div>Location-based search</div><div class="mfl-item"><div class="mfl-check">✓</div>Category filtering</div></div></div>
+  </div>
+  <div class="med-how">
+    <div class="mhow-step"><div class="mhow-icon">📷</div><div class="mhow-title">Scan or Enter</div><div class="mhow-desc">Enter medicine details and expiry date manually or via scan.</div></div>
+    <div class="mhow-step"><div class="mhow-icon">📌</div><div class="mhow-title">Post Listing</div><div class="mhow-desc">Your listing appears on the map for nearby recipients.</div></div>
+    <div class="mhow-step"><div class="mhow-icon">🔍</div><div class="mhow-title">Recipient Finds</div><div class="mhow-desc">Search by name, category, or nearest location.</div></div>
+    <div class="mhow-step"><div class="mhow-icon">🤝</div><div class="mhow-title">Safe Exchange</div><div class="mhow-desc">Connect and coordinate the handover safely.</div></div>
+  </div>
+</section>
+
+<!-- ══ HOW IT WORKS ══ -->
+<section class="hiw-section fade-up" id="how">
+  <span class="section-tag tag-red" style="margin:0 auto 12px;display:table">Platform Flow</span>
+  <h2 class="section-heading">How LifeShare Works</h2>
+  <p class="section-sub">From registration to saving a life — four simple steps.</p>
+  <div class="hiw-track">
+    <div class="hiw-step"><div class="hiw-circle">👤</div><div class="hiw-num">STEP 01</div><div class="hiw-title">Register & Pick Role</div><div class="hiw-desc">Sign up as Donor, Recipient, Hospital, or Admin.</div></div>
+    <div class="hiw-step"><div class="hiw-circle">📍</div><div class="hiw-num">STEP 02</div><div class="hiw-title">Share Your Location</div><div class="hiw-desc">Enable GPS so our system can match you nearby.</div></div>
+    <div class="hiw-step"><div class="hiw-circle">🔗</div><div class="hiw-num">STEP 03</div><div class="hiw-title">Get Matched</div><div class="hiw-desc">Smart algorithm finds the best match in seconds.</div></div>
+    <div class="hiw-step"><div class="hiw-circle">❤️</div><div class="hiw-num">STEP 04</div><div class="hiw-title">Save a Life</div><div class="hiw-desc">Connect, coordinate, and complete the donation.</div></div>
+  </div>
+</section>
+
+<!-- ══ TESTIMONIALS ══ -->
+<section class="testi-section fade-up">
+  <div style="text-align:center">
+    <span class="section-tag tag-red" style="display:inline-flex;margin-bottom:12px">Community Stories</span>
+    <h2 class="section-heading">Real People, Real Impact</h2>
+    <p class="section-sub" style="margin:0 auto">Hear from donors and recipients who made a difference.</p>
+  </div>
+  <div class="testi-grid">
+    <div class="testi-card"><div class="testi-stars">★★★★★</div><p class="testi-text">"I registered as a blood donor and within a week I was matched with someone who desperately needed O+ blood. The process was incredibly smooth."</p><div class="testi-author"><div class="testi-avatar">AK</div><div><div class="testi-name">Ahmed Khan</div><div class="testi-role">Blood Donor · Lahore</div></div></div></div>
+    <div class="testi-card"><div class="testi-stars">★★★★★</div><p class="testi-text">"My mother needed AB- blood urgently. I posted an emergency request and had 3 donors contact me within 20 minutes. LifeShare literally saved her life."</p><div class="testi-author"><div class="testi-avatar">SF</div><div><div class="testi-name">Sara Fatima</div><div class="testi-role">Recipient · Multan</div></div></div></div>
+    <div class="testi-card"><div class="testi-stars">★★★★★</div><p class="testi-text">"As an NGO, we use LifeShare to verify donors and coordinate medicine drives. The admin panel is powerful and logistics are effortless."</p><div class="testi-author"><div class="testi-avatar">HA</div><div><div class="testi-name">Dr. Hina Aslam</div><div class="testi-role">NGO Representative · Faisalabad</div></div></div></div>
+  </div>
+</section>
+
+<!-- ══ CTA ══ -->
+<section class="cta-section fade-up">
+  <div class="cta-inner">
+    <h2>Every Drop Counts.<br>Join LifeShare Today.</h2>
+    <p>Over 1,000 donors are already on the platform. Register in 2 minutes — completely free — and start making a difference in your community.</p>
+    <div class="cta-btns">
+      <button class="btn-cta-main" id="btnCtaDonor">🩸 Register as Donor</button>
+      <button class="btn-cta-sec" id="btnCtaFind">🔍 Find Blood / Medicine</button>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CONTACT ══ -->
+<section class="contact-section fade-up" id="contact">
+  <span class="section-tag tag-red" style="display:inline-flex;margin-bottom:12px">📞 Contact Us</span>
+  <h2 class="section-heading">Get In Touch</h2>
+  <p class="section-sub" style="margin:0 auto">Have questions? We are here to help!</p>
+  <div class="contact-grid">
+    <div class="contact-card"><div class="contact-icon">📧</div><div class="contact-title">Email Us</div><div class="contact-info">lifeshare.donor@gmal.com</div></div>
+    <div class="contact-card"><div class="contact-icon">📞</div><div class="contact-title">Call Us</div><div class="contact-info">+92 3186308699</div></div>
+    <div class="contact-card"><div class="contact-icon">📍</div><div class="contact-title">Visit Us</div><div class="contact-info">University of Education, Multan Campus</div></div>
+  </div>
+</section>
+
+<!-- ══ FOOTER ══ -->
+<footer class="site-footer">
+  <div class="footer-top">
+    <div class="footer-brand">
+      <div class="footer-logo-text">Life<span>Share</span></div>
+      <p class="footer-tagline">A smart community platform for blood and medicine sharing across Pakistan.</p>
+      <div class="footer-social">
+        <i class="fa-brands fa-facebook"></i>
+        <i class="fa-brands fa-twitter"></i>
+        <i class="fa-brands fa-linkedin-in"></i>
+        <i class="fa-brands fa-instagram"></i>
+        <!-- <a class="social-btn" href="" title="Facebook">  </a> -->
+        <!-- <a class="social-btn" href="#" title="Twitter">🐦</a>
+        <a class="social-btn" href="#" title="Instagram">📸</a>
+        <a class="social-btn" href="#" title="WhatsApp">💬</a> -->
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title">PLATFORM</div>
+      <ul class="footer-links-list">
+        <li><a href="register.html">Register as Donor</a></li>
+        <li><a href="register.html">Request Blood</a></li>
+        <li><a href="medicine-listing (1).html">Find Medicines</a></li>
+        <li><a href="register.html">Join as Hospital</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">SUPPORT</div>
+      <ul class="footer-links-list">
+        <li><a href="#how">How It Works</a></li>
+        <li><a href="#contact">Contact Us</a></li>
+        <li><a href="#">FAQ</a></li>
+        <li><a href="#">Report Issue</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">LEGAL</div>
+      <ul class="footer-links-list">
+        <li><a href="#">Privacy Policy</a></li>
+        <li><a href="#">Terms of Service</a></li>
+        <li><a href="#">Cookie Policy</a></li>
+        <li><a href="login.html">Admin Login</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p class="footer-copy">© 2026 LifeShare · FYP — University of Education Lahore, Multan Campus · Muhammad Shahzaib Bilal</p>
+    <ul class="footer-bottom-links">
+      <li><a href="#">Privacy</a></li>
+      <li><a href="#">Terms</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <div class="footer-badge">🩸 Saving Lives Daily</div>
+  </div>
+</footer>
+
+<script>
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('visible'); observer.unobserve(e.target); } });
+}, { threshold: 0.1 });
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+window.addEventListener('scroll', () => {
+  const nav = document.getElementById('navbar');
+  if(window.scrollY > 40) nav.classList.add('scrolled');
+  else nav.classList.remove('scrolled');
+});
+
+const hamburger = document.getElementById('hamburger');
+const mobileMenu = document.getElementById('mobileMenu');
+hamburger.addEventListener('click', () => { mobileMenu.classList.toggle('open'); });
+function closeMobile(){ mobileMenu.classList.remove('open'); }
+
+document.querySelectorAll('.nav-links a, .mobile-menu a').forEach(link => {
+  link.addEventListener('click', function(e) {
+    const href = this.getAttribute('href');
+    if(href && href.startsWith('#')) {
+      e.preventDefault(); closeMobile();
+      const target = document.querySelector(href);
+      if(target) target.scrollIntoView({ behavior: 'smooth' });
+    }
+  });
+});
+
+document.getElementById('btnLogin').onclick         = () => window.location.href = 'login.html';
+document.getElementById('btnSignup').onclick        = () => window.location.href = 'register.html';
+document.getElementById('btnDonor').onclick         = () => window.location.href = 'register.html';
+document.getElementById('btnRequest').onclick       = () => window.location.href = 'register.html';
+document.getElementById('btnRegisterDonor').onclick = () => window.location.href = 'register.html';
+document.getElementById('btnRequestBlood').onclick  = () => window.location.href = 'register.html';
+document.getElementById('btnMedicines').onclick     = () => window.location.href = 'medicine-listing.html';
+document.getElementById('btnCtaDonor').onclick      = () => window.location.href = 'register.html';
+document.getElementById('btnCtaFind').onclick       = () => window.location.href = 'register.html';
+</script>
+</body>
+</html>

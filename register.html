@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Register — LifeShare</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --red:#D92B3A;--red2:#FF4D5E;--red-dk:#A81828;
+  --teal:#0D9488;--teal-lt:#CCFBF1;
+  --ink:#0F172A;--slate:#334155;--muted:#64748B;
+  --ghost:#F1F5F9;--border:#E2E8F0;
+  --white:#fff;--cream:#FFF8F5;
+  --shadow-lg:0 24px 64px rgba(15,23,42,0.13);
+  --shadow-md:0 8px 32px rgba(15,23,42,0.09);
+}
+html{scroll-behavior:smooth}
+body{
+  font-family:'DM Sans',sans-serif;
+  color:var(--ink);
+  background:var(--cream);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-thumb{background:var(--red);border-radius:99px}
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  padding:0 5%;height:68px;
+  display:flex;align-items:center;justify-content:space-between;
+  background:rgba(255,255,255,0.92);backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(0,0,0,0.06);
+}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.logo-mark{
+  width:38px;height:38px;border-radius:11px;
+  background:linear-gradient(135deg,var(--red),var(--red2));
+  display:grid;place-items:center;font-size:1.2rem;
+  box-shadow:0 4px 10px rgba(217,43,58,0.35);
+}
+.logo-text{font-family:'Playfair Display',serif;font-size:1.25rem;font-weight:700;color:var(--ink)}
+.logo-text span{color:var(--red)}
+.nav-right{display:flex;align-items:center;gap:14px;font-size:.9rem;color:var(--muted)}
+.nav-right a{color:var(--red);font-weight:600;text-decoration:none}
+.nav-right a:hover{text-decoration:underline}
+.page{
+  min-height:100vh;
+  display:grid;
+  grid-template-columns:0.7fr 1fr;
+  padding-top:68px;
+}
+.left-panel{
+  background:linear-gradient(160deg,var(--ink) 0%,#1E293B 100%);
+  position:relative;overflow:hidden;
+  display:flex;flex-direction:column;justify-content:center;
+  padding:60px 8%;
+}
+.left-panel::before{
+  content:'';position:absolute;top:-100px;right:-100px;
+  width:450px;height:450px;border-radius:50%;
+  background:radial-gradient(circle,rgba(217,43,58,.18),transparent 65%);
+}
+.left-panel::after{
+  content:'';position:absolute;bottom:-80px;left:-80px;
+  width:350px;height:350px;border-radius:50%;
+  background:radial-gradient(circle,rgba(13,148,136,.12),transparent 65%);
+}
+.left-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(217,43,58,.15);border:1px solid rgba(217,43,58,.3);
+  color:#FF8A94;padding:7px 16px;border-radius:99px;
+  font-size:.78rem;font-weight:600;width:fit-content;
+  margin-bottom:32px;position:relative;z-index:1;
+}
+.pulse-dot{width:7px;height:7px;border-radius:50%;background:#FF8A94;animation:pdot 1.6s ease-in-out infinite}
+@keyframes pdot{0%,100%{box-shadow:0 0 0 0 rgba(255,138,148,.5)}50%{box-shadow:0 0 0 5px rgba(255,138,148,0)}}
+.left-title{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(2rem,3.5vw,3rem);
+  font-weight:900;color:#fff;line-height:1.15;
+  margin-bottom:20px;position:relative;z-index:1;
+}
+.left-title span{color:#FF8A94}
+.left-desc{
+  font-size:.97rem;color:rgba(255,255,255,.6);
+  line-height:1.75;max-width:380px;margin-bottom:44px;
+  position:relative;z-index:1;
+}
+.left-stats{
+  display:flex;gap:32px;
+  position:relative;z-index:1;margin-bottom:44px;
+}
+.ls-num{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:900;color:#fff;line-height:1}
+.ls-num span{color:#FF8A94;font-size:1rem}
+.ls-label{font-size:.75rem;color:rgba(255,255,255,.5);margin-top:3px}
+.ls-div{width:1px;background:rgba(255,255,255,.1);align-self:stretch}
+.role-previews{
+  display:grid;grid-template-columns:1fr 1fr;gap:12px;
+  position:relative;z-index:1;
+}
+.rp-card{
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);
+  border-radius:14px;padding:16px;transition:all .25s;cursor:default;
+}
+.rp-card:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2)}
+.rp-icon{font-size:1.5rem;margin-bottom:8px}
+.rp-name{color:#fff;font-weight:600;font-size:.88rem;margin-bottom:3px}
+.rp-desc{color:rgba(255,255,255,.45);font-size:.75rem;line-height:1.4}
+.right-panel{
+  background:#fff;
+  display:flex;align-items:center;justify-content:center;
+  padding:40px 6%;overflow-y:auto;
+}
+.form-box{width:100%;max-width:480px}
+.form-header{margin-bottom:32px}
+.form-header h2{
+  font-family:'Playfair Display',serif;
+  font-size:1.9rem;font-weight:900;margin-bottom:8px;
+}
+.form-header p{font-size:.92rem;color:var(--muted);line-height:1.6}
+.progress-bar{display:flex;align-items:center;gap:0;margin-bottom:32px;}
+.prog-step{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;position:relative;}
+.prog-step:not(:last-child)::after{
+  content:'';position:absolute;top:14px;left:50%;right:-50%;
+  height:2px;background:var(--border);z-index:0;transition:background .4s;
+}
+.prog-step.done:not(:last-child)::after,
+.prog-step.active:not(:last-child)::after{background:var(--red)}
+.prog-circle{
+  width:28px;height:28px;border-radius:50%;
+  display:grid;place-items:center;font-size:.75rem;font-weight:700;
+  position:relative;z-index:1;transition:all .3s;
+  border:2px solid var(--border);background:#fff;color:var(--muted);
+}
+.prog-step.done .prog-circle{background:var(--red);border-color:var(--red);color:#fff}
+.prog-step.active .prog-circle{background:var(--red);border-color:var(--red);color:#fff;box-shadow:0 0 0 4px rgba(217,43,58,.15)}
+.prog-label{font-size:.68rem;color:var(--muted);font-weight:500;text-align:center}
+.prog-step.active .prog-label{color:var(--red);font-weight:700}
+.role-selector{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px;}
+.role-btn{
+  border:2px solid var(--border);border-radius:14px;
+  padding:16px 12px;text-align:center;cursor:pointer;
+  transition:all .25s;background:#fff;
+}
+.role-btn:hover{border-color:var(--red);background:var(--cream)}
+.role-btn.selected{border-color:var(--red);background:#FFF0F0;box-shadow:0 0 0 3px rgba(217,43,58,.1);}
+.rb-icon{font-size:1.6rem;margin-bottom:6px}
+.rb-name{font-weight:700;font-size:.88rem;color:var(--ink);margin-bottom:2px}
+.rb-desc{font-size:.72rem;color:var(--muted);line-height:1.4}
+.form-step{display:none}
+.form-step.active{display:block;animation:slideIn .35s ease}
+@keyframes slideIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+.input-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
+.input-group{margin-bottom:16px}
+.input-group label{display:block;font-size:.82rem;font-weight:600;color:var(--slate);margin-bottom:6px;}
+.input-group label span{color:var(--red)}
+.input-wrap{position:relative}
+.input-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:1rem;pointer-events:none;}
+input,select{
+  width:100%;padding:11px 14px 11px 42px;
+  border:1.5px solid var(--border);border-radius:10px;
+  font-family:'DM Sans',sans-serif;font-size:.92rem;color:var(--ink);
+  background:#fff;transition:all .2s;outline:none;appearance:none;
+}
+input:focus,select:focus{border-color:var(--red);box-shadow:0 0 0 3px rgba(217,43,58,.1)}
+input.no-icon,select.no-icon{padding-left:14px}
+input::placeholder{color:#CBD5E1}
+.input-hint{font-size:.72rem;color:var(--muted);margin-top:4px}
+.blood-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px;}
+.bg-btn{
+  border:1.5px solid var(--border);border-radius:10px;
+  padding:10px 6px;text-align:center;cursor:pointer;
+  font-weight:700;font-size:.88rem;color:var(--muted);
+  transition:all .2s;background:#fff;
+}
+.bg-btn:hover{border-color:var(--red);color:var(--red);background:#FFF0F0}
+.bg-btn.selected{background:var(--red);border-color:var(--red);color:#fff;box-shadow:0 3px 10px rgba(217,43,58,.3)}
+.pw-strength{margin-top:6px;display:flex;gap:4px;align-items:center}
+.pw-bar{height:4px;flex:1;border-radius:99px;background:var(--border);transition:background .3s}
+.pw-bar.weak{background:#EF4444}
+.pw-bar.fair{background:#F59E0B}
+.pw-bar.good{background:#10B981}
+.pw-text{font-size:.7rem;color:var(--muted);margin-left:6px;min-width:40px}
+.check-group{display:flex;align-items:flex-start;gap:10px;margin-bottom:20px}
+.check-group input[type=checkbox]{width:18px;height:18px;min-width:18px;padding:0;accent-color:var(--red);border-radius:4px;margin-top:2px;}
+.check-group label{font-size:.82rem;color:var(--muted);line-height:1.5}
+.check-group label a{color:var(--red);text-decoration:none;font-weight:600}
+.btn-full{width:100%;padding:13px;border-radius:12px;font-family:'DM Sans',sans-serif;font-size:.97rem;font-weight:700;cursor:pointer;border:none;transition:all .25s;}
+.btn-primary{background:linear-gradient(135deg,var(--red),var(--red2));color:#fff;box-shadow:0 4px 18px rgba(217,43,58,.35);}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(217,43,58,.4)}
+.btn-secondary{background:var(--ghost);color:var(--slate);margin-bottom:12px;}
+.btn-secondary:hover{background:var(--border)}
+.btn-row{display:flex;gap:12px;margin-top:8px}
+.btn-row .btn-full{flex:1}
+.btn-back{background:var(--ghost);color:var(--slate);flex:0.4!important}
+.btn-back:hover{background:var(--border)}
+.divider{display:flex;align-items:center;gap:12px;margin:20px 0}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.divider span{font-size:.78rem;color:var(--muted)}
+.success-screen{display:none;text-align:center;padding:20px 0;animation:slideIn .4s ease;}
+.success-screen.active{display:block}
+.success-icon{
+  width:80px;height:80px;border-radius:50%;
+  background:linear-gradient(135deg,#10B981,#059669);
+  display:grid;place-items:center;font-size:2rem;
+  margin:0 auto 24px;box-shadow:0 8px 24px rgba(16,185,129,.3);
+  animation:popIn .5s cubic-bezier(.175,.885,.32,1.275);
+}
+@keyframes popIn{from{transform:scale(0)}to{transform:scale(1)}}
+.success-screen h3{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:900;margin-bottom:10px;}
+.success-screen p{color:var(--muted);font-size:.92rem;line-height:1.6;margin-bottom:28px}
+.success-role-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--cream);border:1.5px solid #FED7D7;
+  padding:10px 20px;border-radius:99px;
+  font-weight:600;font-size:.9rem;color:var(--red);margin-bottom:28px;
+}
+.form-section-label{
+  font-size:.72rem;font-weight:700;color:var(--red);
+  text-transform:uppercase;letter-spacing:.1em;
+  margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid #FEE2E2;
+}
+@media(max-width:860px){
+  .page{grid-template-columns:1fr}
+  .left-panel{display:none}
+  .right-panel{padding:32px 5%}
+}
+@media(max-width:460px){
+  .role-selector{grid-template-columns:1fr 1fr}
+  .input-row{grid-template-columns:1fr}
+  .blood-grid{grid-template-columns:repeat(4,1fr)}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="logo">
+    <div class="logo-mark">🩸</div>
+    <span class="logo-text">Life<span>Share</span></span>
+  </a>
+  <div class="nav-right">
+    Already have an account? <a href="login.html">Log In →</a>
+  </div>
+</nav>
+
+<div class="page">
+  <div class="left-panel">
+    <div class="left-badge"><div class="pulse-dot"></div> Join 1,000+ Members</div>
+    <h2 class="left-title">Create Your<br><span>LifeShare</span><br>Account</h2>
+    <p class="left-desc">Join Pakistan's growing community of blood donors and medicine sharers. Registration is free and takes under 2 minutes.</p>
+    <div class="left-stats">
+      <div class="ls-item">
+        <div class="ls-num">1K<span>+</span></div>
+        <div class="ls-label">Active Donors</div>
+      </div>
+      <div class="ls-div"></div>
+      <div class="ls-item">
+        <div class="ls-num">500<span>+</span></div>
+        <div class="ls-label">Lives Saved</div>
+      </div>
+      <div class="ls-div"></div>
+      <div class="ls-item">
+        <div class="ls-num">8</div>
+        <div class="ls-label">Blood Groups</div>
+      </div>
+    </div>
+    <div class="role-previews">
+      <div class="rp-card"><div class="rp-icon">🙋</div><div class="rp-name">Donor</div><div class="rp-desc">Donate blood or share medicines with those in need</div></div>
+      <div class="rp-card"><div class="rp-icon">🤲</div><div class="rp-name">Recipient</div><div class="rp-desc">Request blood or find medicines near your location</div></div>
+      <div class="rp-card"><div class="rp-icon">🏥</div><div class="rp-name">Hospital/NGO</div><div class="rp-desc">Verify donors and coordinate emergency donations</div></div>
+      <div class="rp-card"><div class="rp-icon">🛡️</div><div class="rp-name">Admin</div><div class="rp-desc">Manage platform users, reports and system health</div></div>
+    </div>
+  </div>
+
+  <div class="right-panel">
+    <div class="form-box">
+      <div class="form-header">
+        <h2>Create Account</h2>
+        <p>Fill in your details below. All fields marked <span style="color:var(--red)">*</span> are required.</p>
+      </div>
+
+      <div class="progress-bar">
+        <div class="prog-step active" id="prog1"><div class="prog-circle">1</div><div class="prog-label">Role</div></div>
+        <div class="prog-step" id="prog2"><div class="prog-circle">2</div><div class="prog-label">Personal</div></div>
+        <div class="prog-step" id="prog3"><div class="prog-circle">3</div><div class="prog-label">Security</div></div>
+        <div class="prog-step" id="prog4"><div class="prog-circle">4</div><div class="prog-label">Done</div></div>
+      </div>
+
+      <!-- STEP 1 -->
+      <div class="form-step active" id="step1">
+        <div class="form-section-label">Step 1 — Choose Your Role</div>
+        <div class="role-selector">
+          <div class="role-btn" onclick="selectRole(this,'Donor')"><div class="rb-icon">🙋</div><div class="rb-name">Donor</div><div class="rb-desc">I want to donate blood or medicines</div></div>
+          <div class="role-btn" onclick="selectRole(this,'Recipient')"><div class="rb-icon">🤲</div><div class="rb-name">Recipient</div><div class="rb-desc">I need blood or medicines</div></div>
+          <div class="role-btn" onclick="selectRole(this,'Hospital/NGO')"><div class="rb-icon">🏥</div><div class="rb-name">Hospital / NGO</div><div class="rb-desc">We verify and coordinate donations</div></div>
+          <div class="role-btn" onclick="selectRole(this,'Admin')"><div class="rb-icon">🛡️</div><div class="rb-name">Admin</div><div class="rb-desc">Platform management access</div></div>
+        </div>
+        <p id="role-error" style="color:var(--red);font-size:.8rem;margin-bottom:12px;display:none">⚠️ Please select a role to continue.</p>
+        <button class="btn-full btn-primary" onclick="goStep(2)">Continue →</button>
+        <div class="divider"><span>or</span></div>
+        <p style="text-align:center;font-size:.85rem;color:var(--muted)">Already have an account? <a href="login.html" style="color:var(--red);font-weight:600">Log In</a></p>
+      </div>
+
+      <!-- STEP 2 -->
+      <div class="form-step" id="step2">
+        <div class="form-section-label">Step 2 — Personal Information</div>
+        <div class="input-row">
+          <div class="input-group">
+            <label>Full Name <span>*</span></label>
+            <div class="input-wrap">
+              <span class="input-icon">👤</span>
+              <input type="text" id="fullname" placeholder="M Shahzaib "/>
+            </div>
+          </div>
+          <div class="input-group">
+            <label>Phone Number <span>*</span></label>
+            <div class="input-wrap">
+              <span class="input-icon">📞</span>
+              <input type="tel" id="phone" placeholder="+92 300 0000000"/>
+            </div>
+          </div>
+        </div>
+        <div class="input-group">
+          <label>Email Address <span>*</span></label>
+          <div class="input-wrap">
+            <span class="input-icon">✉️</span>
+            <input type="email" id="email" placeholder="you@example.com"/>
+          </div>
+        </div>
+        <div class="input-group">
+          <label>City / Location <span>*</span></label>
+          <div class="input-wrap">
+            <span class="input-icon">📍</span>
+            <select id="city" style="padding-left:42px">
+              <option value="">Select your city</option>
+              <option>Lahore</option>
+              <option>Karachi</option>
+              <option>Islamabad</option>
+              <option>Multan</option>
+              <option>Faisalabad</option>
+              <option>Rawalpindi</option>
+              <option>Peshawar</option>
+              <option>Quetta</option>
+              <option>Other</option>
+            </select>
+          </div>
+        </div>
+        <div id="blood-group-section">
+          <div class="form-section-label" style="margin-top:8px">Blood Group <span style="color:var(--red)">*</span> (Donor / Recipient)</div>
+          <div class="blood-grid">
+            <div class="bg-btn" onclick="selectBlood(this,'A+')">A+</div>
+            <div class="bg-btn" onclick="selectBlood(this,'A-')">A−</div>
+            <div class="bg-btn" onclick="selectBlood(this,'B+')">B+</div>
+            <div class="bg-btn" onclick="selectBlood(this,'B-')">B−</div>
+            <div class="bg-btn" onclick="selectBlood(this,'AB+')">AB+</div>
+            <div class="bg-btn" onclick="selectBlood(this,'AB-')">AB−</div>
+            <div class="bg-btn" onclick="selectBlood(this,'O+')">O+</div>
+            <div class="bg-btn" onclick="selectBlood(this,'O-')">O−</div>
+          </div>
+        </div>
+        <p id="step2-error" style="color:var(--red);font-size:.8rem;margin-bottom:10px;display:none">⚠️ Please fill all required fields.</p>
+        <div class="btn-row">
+          <button class="btn-full btn-back" onclick="goStep(1)">← Back</button>
+          <button class="btn-full btn-primary" onclick="goStep(3)">Continue →</button>
+        </div>
+      </div>
+
+      <!-- STEP 3 -->
+      <div class="form-step" id="step3">
+        <div class="form-section-label">Step 3 — Create Password</div>
+        <div class="input-group">
+          <label>Password <span>*</span></label>
+          <div class="input-wrap">
+            <span class="input-icon">🔒</span>
+            <input type="password" id="password" placeholder="Min. 8 characters" oninput="checkStrength(this.value)"/>
+          </div>
+          <div class="pw-strength">
+            <div class="pw-bar" id="bar1"></div>
+            <div class="pw-bar" id="bar2"></div>
+            <div class="pw-bar" id="bar3"></div>
+            <div class="pw-bar" id="bar4"></div>
+            <span class="pw-text" id="pw-label">—</span>
+          </div>
+          <div class="input-hint">Use letters, numbers & symbols for a strong password.</div>
+        </div>
+        <div class="input-group">
+          <label>Confirm Password <span>*</span></label>
+          <div class="input-wrap">
+            <span class="input-icon">🔒</span>
+            <input type="password" id="confirm-password" placeholder="Re-enter password"/>
+          </div>
+        </div>
+        <div class="check-group">
+          <input type="checkbox" id="terms"/>
+          <label for="terms">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a> of LifeShare.</label>
+        </div>
+        <p id="step3-error" style="color:var(--red);font-size:.8rem;margin-bottom:10px;display:none">⚠️ Please check all fields and agree to terms.</p>
+        <div class="btn-row">
+          <button class="btn-full btn-back" onclick="goStep(2)">← Back</button>
+          <button class="btn-full btn-primary" onclick="submitForm()">Create Account 🎉</button>
+        </div>
+      </div>
+
+      <!-- SUCCESS -->
+      <div class="success-screen" id="success">
+        <div class="success-icon">✓</div>
+        <h3>Account Created!</h3>
+        <p>Welcome to LifeShare! Your account has been registered successfully.</p>
+        <div class="success-role-badge">
+          <span id="success-role-icon">🙋</span>
+          <span id="success-role-text">Registered as Donor</span>
+        </div>
+        <button class="btn-full btn-primary" onclick="window.location.href='login.html'">Go to Login →</button>
+        <div style="margin-top:14px">
+          <a href="index.html" style="font-size:.85rem;color:var(--muted);text-decoration:none">← Back to Home</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+// Global variables
+let selectedRole = '';
+let selectedBlood = '';
+let savedFullName = '';
+let savedEmail = '';
+let savedPhone = '';
+let savedCity = '';
+let savedBloodGroup = '';
+
+// Role selection
+function selectRole(el, role) {
+  document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedRole = role;
+  document.getElementById('role-error').style.display = 'none';
+  const showBlood = (role === 'Donor' || role === 'Recipient');
+  document.getElementById('blood-group-section').style.display = showBlood ? 'block' : 'none';
+}
+
+// Blood group selection
+function selectBlood(el, group) {
+  document.querySelectorAll('.bg-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedBlood = group;
+  savedBloodGroup = group;
+}
+
+// Progress bar
+function updateProgress(step) {
+  for (let i = 1; i <= 4; i++) {
+    const el = document.getElementById('prog' + i);
+    el.classList.remove('active', 'done');
+    if (i < step) el.classList.add('done');
+    if (i === step) el.classList.add('active');
+  }
+}
+
+// Step navigation
+function goStep(step) {
+  if (step === 2 && !selectedRole) {
+    document.getElementById('role-error').style.display = 'block';
+    return;
+  }
+
+  if (step === 3) {
+    const name = document.getElementById('fullname').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const city = document.getElementById('city').value;
+    const needBlood = selectedRole === 'Donor' || selectedRole === 'Recipient';
+
+    if (!name || !phone || !email || !city || (needBlood && !selectedBlood)) {
+      document.getElementById('step2-error').style.display = 'block';
+      return;
+    }
+
+    // ✅ Save all values here!
+    savedFullName = name;
+    savedEmail = email;
+    savedPhone = phone;
+    savedCity = city;
+    savedBloodGroup = selectedBlood;
+
+    console.log('✅ Saved:', savedFullName, savedEmail, savedPhone, savedCity, savedBloodGroup);
+    document.getElementById('step2-error').style.display = 'none';
+  }
+
+  document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
+  document.getElementById('step' + step).classList.add('active');
+  updateProgress(step);
+}
+
+// Password strength
+function checkStrength(pw) {
+  const bars = ['bar1','bar2','bar3','bar4'];
+  const label = document.getElementById('pw-label');
+  let score = 0;
+  if (pw.length >= 8) score++;
+  if (/[A-Z]/.test(pw)) score++;
+  if (/[0-9]/.test(pw)) score++;
+  if (/[^A-Za-z0-9]/.test(pw)) score++;
+  const colors = ['weak','weak','fair','good'];
+  const labels = ['Weak','Weak','Fair','Strong'];
+  bars.forEach((b,i) => {
+    const el = document.getElementById(b);
+    el.className = 'pw-bar';
+    if (i < score) el.classList.add(colors[score-1]);
+  });
+  label.textContent = score > 0 ? labels[score-1] : '—';
+  label.style.color = score >= 3 ? '#10B981' : score >= 2 ? '#F59E0B' : '#EF4444';
+}
+
+// Submit form
+async function submitForm() {
+  const pw = document.getElementById('password').value;
+  const cpw = document.getElementById('confirm-password').value;
+
+  if (!pw || pw.length < 8 || pw !== cpw) {
+    document.getElementById('step3-error').style.display = 'block';
+    return;
+  }
+
+  // Use saved values from Step 2
+  const full_name = savedFullName;
+  const email = savedEmail;
+  const phone = savedPhone;
+  const city = savedCity;
+  const blood_group = savedBloodGroup || null;
+  const role = selectedRole.toLowerCase();
+
+  console.log('📤 Sending:', { full_name, email, phone, city, role, blood_group });
+
+  if (!full_name || !email) {
+    alert('❌ Please go back and fill Step 2 properly!');
+    return;
+  }
+
+  try {
+    const response = await fetch('http://localhost:5000/api/auth/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ full_name, email, password: pw, role, blood_group, phone, city })
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
+      const roleIcons = {'donor':'🩸','recipient':'👥','hospital/ngo':'🏥','admin':'🌐'};
+      document.getElementById('success-role-icon').textContent = roleIcons[role] || '👤';
+      document.getElementById('success-role-text').textContent = 'Registered as ' + selectedRole;
+      document.getElementById('success').classList.add('active');
+      updateProgress(4);
+      setTimeout(() => { window.location.href = 'login.html'; }, 2000);
+    } else {
+      alert('❌ ' + data.message);
+    }
+  } catch (error) {
+    alert('❌ Server not running! Please start the backend.');
+  }
+}
+</script>
+
+</body>
+</html>

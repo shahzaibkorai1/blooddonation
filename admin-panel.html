@@ -1,0 +1,1316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Admin Panel — LifeShare</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --purple:#7C3AED;--purple2:#8B5CF6;--purple-lt:#EDE9FE;--purple-dk:#5B21B6;
+  --red:#D92B3A;--red2:#FF4D5E;--red-lt:#FFF0F1;
+  --green:#10B981;--green-lt:#D1FAE5;
+  --amber:#F59E0B;--amber-lt:#FEF3C7;
+  --blue:#2563EB;--blue-lt:#EFF6FF;
+  --teal:#0D9488;--teal-lt:#CCFBF1;
+  --ink:#0F172A;--slate:#334155;--muted:#64748B;
+  --ghost:#F8FAFC;--border:#E2E8F0;--border2:#F1F5F9;
+  --sidebar-w:255px;
+  --shadow:0 4px 20px rgba(15,23,42,0.07);
+  --shadow-lg:0 12px 40px rgba(15,23,42,0.11);
+}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--ghost);color:var(--ink);display:flex;min-height:100vh;overflow-x:hidden}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-thumb{background:var(--purple2);border-radius:99px}
+
+/* ══════ SIDEBAR ══════ */
+.sidebar{
+  width:var(--sidebar-w);min-width:var(--sidebar-w);
+  background:linear-gradient(180deg,#0F172A 0%,#1A0F2E 100%);
+  display:flex;flex-direction:column;min-height:100vh;
+  position:fixed;left:0;top:0;bottom:0;z-index:100;
+}
+.sb-logo{
+  padding:20px 18px;border-bottom:1px solid rgba(255,255,255,.07);
+  display:flex;align-items:center;gap:10px;text-decoration:none;
+}
+.lm{
+  width:36px;height:36px;border-radius:10px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--purple),var(--purple2));
+  display:grid;place-items:center;font-size:1.1rem;
+  box-shadow:0 4px 12px rgba(124,58,237,.4);
+}
+.lt{font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:700;color:#fff}
+.lt span{color:var(--purple2)}
+
+/* Admin badge */
+.admin-badge{
+  margin:14px 12px 4px;
+  background:linear-gradient(135deg,rgba(124,58,237,.2),rgba(139,92,246,.1));
+  border:1px solid rgba(124,58,237,.3);
+  border-radius:14px;padding:14px 16px;
+  display:flex;align-items:center;gap:12px;
+}
+.ab-avatar{
+  width:40px;height:40px;border-radius:50%;
+  background:linear-gradient(135deg,var(--purple),var(--purple2));
+  display:grid;place-items:center;font-size:1rem;flex-shrink:0;
+  box-shadow:0 3px 10px rgba(124,58,237,.35);
+}
+.ab-name{color:#fff;font-weight:700;font-size:.85rem}
+.ab-role{
+  color:rgba(255,255,255,.4);font-size:.7rem;margin-top:1px;
+  display:flex;align-items:center;gap:4px;
+}
+.ab-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:glow 1.6s ease-in-out infinite}
+@keyframes glow{0%,100%{box-shadow:0 0 0 0 rgba(16,185,129,.5)}50%{box-shadow:0 0 0 4px rgba(16,185,129,0)}}
+
+.sb-nav{flex:1;padding:6px 10px;overflow-y:auto}
+.nav-section{font-size:.62rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.2);padding:14px 8px 5px}
+.ni{
+  display:flex;align-items:center;gap:11px;
+  padding:10px 11px;border-radius:10px;
+  color:rgba(255,255,255,.5);font-size:.86rem;font-weight:500;
+  cursor:pointer;transition:all .2s;margin-bottom:2px;
+  text-decoration:none;position:relative;
+}
+.ni:hover{background:rgba(255,255,255,.07);color:#fff}
+.ni.active{background:rgba(124,58,237,.2);color:#fff;border:1px solid rgba(124,58,237,.3)}
+.ni.active::before{content:'';position:absolute;left:0;top:25%;bottom:25%;width:3px;border-radius:0 3px 3px 0;background:var(--purple2)}
+.ni-icon{font-size:1.05rem;width:20px;text-align:center;flex-shrink:0}
+.nb{
+  margin-left:auto;font-size:.62rem;font-weight:700;
+  padding:2px 7px;border-radius:99px;min-width:18px;text-align:center;
+}
+.nb-red{background:var(--red);color:#fff}
+.nb-amber{background:var(--amber);color:#fff}
+.nb-green{background:var(--green);color:#fff}
+
+.sb-bottom{padding:12px;border-top:1px solid rgba(255,255,255,.07)}
+.btn-logout{
+  width:100%;padding:9px;border-radius:10px;
+  background:rgba(124,58,237,.12);border:1px solid rgba(124,58,237,.25);
+  color:rgba(255,255,255,.6);font-size:.83rem;font-weight:600;
+  cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.btn-logout:hover{background:rgba(124,58,237,.25);color:#fff}
+
+/* ══════ MAIN ══════ */
+.main{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;min-height:100vh}
+
+/* Topbar */
+.topbar{
+  background:#fff;border-bottom:1px solid var(--border);
+  padding:0 26px;height:62px;
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:50;
+}
+.tl{display:flex;align-items:center;gap:14px}
+.menu-btn{display:none;background:none;border:none;cursor:pointer;font-size:1.25rem}
+.pt{font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:700}
+.ps{font-size:.76rem;color:var(--muted);margin-top:1px}
+.tr{display:flex;align-items:center;gap:10px}
+.tb-time{font-size:.78rem;color:var(--muted)}
+.icon-btn{
+  width:36px;height:36px;border-radius:9px;
+  background:var(--ghost);border:1px solid var(--border);
+  display:grid;place-items:center;cursor:pointer;font-size:1rem;
+  transition:all .2s;position:relative;
+}
+.icon-btn:hover{background:var(--purple-lt);border-color:var(--purple)}
+.notif-dot{position:absolute;top:5px;right:5px;width:7px;height:7px;border-radius:50%;background:var(--red);border:2px solid #fff}
+.tb-av{
+  width:36px;height:36px;border-radius:9px;cursor:pointer;
+  background:linear-gradient(135deg,var(--purple),var(--purple2));
+  display:grid;place-items:center;font-size:.95rem;
+  box-shadow:0 2px 8px rgba(124,58,237,.3);
+}
+.export-btn{
+  padding:8px 16px;border-radius:9px;
+  background:var(--purple);color:#fff;
+  font-size:.8rem;font-weight:700;border:none;cursor:pointer;
+  font-family:'DM Sans',sans-serif;transition:all .2s;
+  box-shadow:0 3px 10px rgba(124,58,237,.3);
+}
+.export-btn:hover{background:var(--purple-dk);transform:translateY(-1px)}
+
+/* Content */
+.content{padding:22px 26px;flex:1}
+
+/* ══════ TOP BANNER ══════ */
+.admin-banner{
+  background:linear-gradient(135deg,var(--purple-dk) 0%,var(--purple) 50%,var(--purple2) 100%);
+  border-radius:18px;padding:22px 28px;
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:20px;position:relative;overflow:hidden;
+}
+.banner-bg{position:absolute;right:-40px;top:-40px;width:220px;height:220px;border-radius:50%;background:rgba(255,255,255,.06)}
+.banner-bg2{position:absolute;right:60px;bottom:-60px;width:150px;height:150px;border-radius:50%;background:rgba(255,255,255,.04)}
+.bl{position:relative;z-index:1}
+.b-chip{
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(255,255,255,.15);color:rgba(255,255,255,.9);
+  padding:4px 12px;border-radius:99px;font-size:.7rem;font-weight:700;margin-bottom:10px;
+}
+.b-title{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:900;color:#fff;margin-bottom:5px}
+.b-sub{font-size:.84rem;color:rgba(255,255,255,.65);line-height:1.5;max-width:420px}
+.br{display:flex;gap:20px;position:relative;z-index:1}
+.b-stat{text-align:center;background:rgba(255,255,255,.12);border-radius:12px;padding:14px 20px;min-width:80px}
+.b-num{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:900;color:#fff;line-height:1}
+.b-label{font-size:.68rem;color:rgba(255,255,255,.6);margin-top:3px}
+
+/* ══════ STAT CARDS ══════ */
+.stats-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:20px}
+.sc{
+  background:#fff;border-radius:14px;padding:16px 18px;
+  border:1px solid var(--border);transition:all .25s;position:relative;overflow:hidden;
+}
+.sc::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:14px 14px 0 0}
+.sc.c-purple::after{background:linear-gradient(90deg,var(--purple),var(--purple2))}
+.sc.c-red::after{background:linear-gradient(90deg,var(--red),var(--red2))}
+.sc.c-green::after{background:linear-gradient(90deg,var(--green),#059669)}
+.sc.c-amber::after{background:linear-gradient(90deg,var(--amber),#D97706)}
+.sc.c-blue::after{background:linear-gradient(90deg,var(--blue),#3B82F6)}
+.sc:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
+.sc-ico{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;font-size:1.05rem;margin-bottom:10px}
+.i-pu{background:var(--purple-lt)}
+.i-re{background:var(--red-lt)}
+.i-gr{background:var(--green-lt)}
+.i-am{background:var(--amber-lt)}
+.i-bl{background:var(--blue-lt)}
+.sc-num{font-family:'Playfair Display',serif;font-size:1.7rem;font-weight:900;line-height:1;margin-bottom:2px}
+.sc-lbl{font-size:.74rem;color:var(--muted);font-weight:500}
+.sc-ch{display:inline-flex;align-items:center;gap:3px;font-size:.68rem;font-weight:600;margin-top:6px;padding:2px 7px;border-radius:99px}
+.ch-up{background:var(--green-lt);color:var(--green)}
+.ch-dn{background:var(--red-lt);color:var(--red)}
+.ch-nu{background:var(--amber-lt);color:var(--amber)}
+
+/* ══════ TABS ══════ */
+.tabs{
+  display:flex;gap:4px;background:#fff;
+  border:1px solid var(--border);border-radius:12px;padding:4px;
+  margin-bottom:18px;width:fit-content;
+}
+.tab{
+  padding:8px 18px;border-radius:9px;font-size:.85rem;font-weight:600;
+  cursor:pointer;color:var(--muted);border:none;background:transparent;
+  font-family:'DM Sans',sans-serif;transition:all .2s;
+  display:flex;align-items:center;gap:6px;
+}
+.tab.active{background:var(--purple);color:#fff;box-shadow:0 2px 8px rgba(124,58,237,.3)}
+.tab:hover:not(.active){background:var(--ghost)}
+
+/* ══════ MAIN GRID ══════ */
+.main-grid{display:grid;grid-template-columns:1.5fr 1fr;gap:18px;margin-bottom:18px}
+
+/* Card */
+.card{background:#fff;border-radius:16px;border:1px solid var(--border);overflow:hidden}
+.ch{padding:16px 22px 12px;border-bottom:1px solid var(--border2);display:flex;align-items:center;justify-content:space-between}
+.ct{font-family:'Playfair Display',serif;font-size:.98rem;font-weight:700}
+.cs{font-size:.74rem;color:var(--muted);margin-top:2px}
+.cb{font-size:.68rem;font-weight:700;padding:3px 9px;border-radius:99px}
+.b-pu{background:var(--purple-lt);color:var(--purple)}
+.b-re{background:var(--red-lt);color:var(--red)}
+.b-gr{background:var(--green-lt);color:var(--green)}
+.b-am{background:var(--amber-lt);color:var(--amber)}
+.b-bl{background:var(--blue-lt);color:var(--blue)}
+
+/* ══════ USERS TABLE ══════ */
+.table-controls{
+  display:flex;align-items:center;gap:10px;
+  padding:12px 20px;border-bottom:1px solid var(--border2);
+  flex-wrap:wrap;
+}
+.search-wrap{position:relative;flex:1;min-width:180px}
+.search-wrap input{
+  width:100%;padding:8px 11px 8px 34px;
+  border:1.5px solid var(--border);border-radius:9px;
+  font-family:'DM Sans',sans-serif;font-size:.83rem;color:var(--ink);
+  outline:none;transition:border-color .2s;
+}
+.search-wrap input:focus{border-color:var(--purple)}
+.search-wrap::before{content:'🔍';position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:.85rem;pointer-events:none}
+.filter-select{
+  padding:8px 11px;border:1.5px solid var(--border);border-radius:9px;
+  font-family:'DM Sans',sans-serif;font-size:.82rem;color:var(--slate);
+  outline:none;cursor:pointer;background:#fff;
+}
+.filter-select:focus{border-color:var(--purple)}
+.btn-sm{
+  padding:7px 14px;border-radius:8px;font-size:.78rem;font-weight:700;
+  cursor:pointer;border:none;font-family:'DM Sans',sans-serif;transition:all .2s;
+  white-space:nowrap;
+}
+.btn-purple{background:var(--purple);color:#fff;box-shadow:0 2px 8px rgba(124,58,237,.25)}
+.btn-purple:hover{background:var(--purple-dk)}
+.btn-ghost2{background:var(--ghost);color:var(--slate);border:1px solid var(--border)}
+.btn-ghost2:hover{background:var(--border)}
+
+table{width:100%;border-collapse:collapse}
+thead tr{background:#FAFBFF;border-bottom:2px solid var(--border)}
+th{
+  padding:10px 16px;text-align:left;font-size:.72rem;
+  font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;
+  white-space:nowrap;
+}
+tbody tr{border-bottom:1px solid var(--border2);transition:background .15s;cursor:default}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:#FAFBFF}
+td{padding:12px 16px;font-size:.83rem;vertical-align:middle}
+
+.user-cell{display:flex;align-items:center;gap:10px}
+.user-av{
+  width:34px;height:34px;border-radius:9px;flex-shrink:0;
+  display:grid;place-items:center;font-size:.85rem;font-weight:700;color:#fff;
+}
+.av-blue{background:linear-gradient(135deg,var(--blue),#3B82F6)}
+.av-red{background:linear-gradient(135deg,var(--red),var(--red2))}
+.av-teal{background:linear-gradient(135deg,var(--teal),#0F766E)}
+.av-amber{background:linear-gradient(135deg,var(--amber),#D97706)}
+.av-purple{background:linear-gradient(135deg,var(--purple),var(--purple2))}
+.user-name{font-weight:600;font-size:.84rem}
+.user-email{font-size:.72rem;color:var(--muted)}
+
+.role-pill{font-size:.7rem;font-weight:700;padding:3px 9px;border-radius:99px}
+.rp-donor{background:#FEE2E2;color:var(--red)}
+.rp-recipient{background:var(--blue-lt);color:var(--blue)}
+.rp-hospital{background:var(--teal-lt);color:var(--teal)}
+.rp-admin{background:var(--purple-lt);color:var(--purple)}
+
+.status-pill{font-size:.7rem;font-weight:700;padding:3px 9px;border-radius:99px}
+.sp-active{background:var(--green-lt);color:var(--green)}
+.sp-pending{background:var(--amber-lt);color:var(--amber)}
+.sp-suspended{background:var(--red-lt);color:var(--red)}
+
+.verified-chip{font-size:.68rem;font-weight:700;padding:2px 7px;border-radius:99px;display:inline-flex;align-items:center;gap:3px}
+.vc-yes{background:var(--green-lt);color:var(--green)}
+.vc-no{background:var(--amber-lt);color:var(--amber)}
+
+.action-btns{display:flex;gap:6px}
+.ab-btn{
+  padding:5px 10px;border-radius:6px;font-size:.72rem;font-weight:600;
+  cursor:pointer;border:none;font-family:'DM Sans',sans-serif;transition:all .2s;
+}
+.ab-approve{background:var(--green-lt);color:var(--green)}
+.ab-approve:hover{background:var(--green);color:#fff}
+.ab-suspend{background:var(--amber-lt);color:var(--amber)}
+.ab-suspend:hover{background:var(--amber);color:#fff}
+.ab-delete{background:var(--red-lt);color:var(--red)}
+.ab-delete:hover{background:var(--red);color:#fff}
+.ab-view{background:var(--blue-lt);color:var(--blue)}
+.ab-view:hover{background:var(--blue);color:#fff}
+
+/* Pagination */
+.pagination{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 20px;border-top:1px solid var(--border2);
+}
+.pg-info{font-size:.78rem;color:var(--muted)}
+.pg-btns{display:flex;gap:5px}
+.pg-btn{
+  width:30px;height:30px;border-radius:7px;border:1px solid var(--border);
+  background:#fff;font-size:.78rem;cursor:pointer;transition:all .2s;
+  display:grid;place-items:center;font-family:'DM Sans',sans-serif;
+}
+.pg-btn.active{background:var(--purple);color:#fff;border-color:var(--purple)}
+.pg-btn:hover:not(.active){background:var(--ghost)}
+
+/* ══════ CHARTS AREA ══════ */
+.chart-card{background:#fff;border-radius:16px;border:1px solid var(--border);overflow:hidden}
+.chart-body{padding:16px 20px}
+
+/* Mini bar chart */
+.bar-chart{display:flex;align-items:flex-end;gap:8px;height:120px;margin-bottom:10px}
+.bar-col{display:flex;flex-direction:column;align-items:center;flex:1;gap:5px}
+.bar{width:100%;border-radius:6px 6px 0 0;transition:height .6s ease;min-height:4px;cursor:pointer}
+.bar-purple{background:linear-gradient(to top,var(--purple),var(--purple2))}
+.bar-red{background:linear-gradient(to top,var(--red),var(--red2))}
+.bar:hover{filter:brightness(1.15)}
+.bar-lbl{font-size:.65rem;color:var(--muted);font-weight:500;text-align:center}
+.bar-val{font-size:.68rem;font-weight:700;color:var(--ink)}
+
+/* Donut chart (CSS) */
+.donut-wrap{display:flex;align-items:center;gap:20px;padding:14px 20px}
+.donut{
+  width:110px;height:110px;border-radius:50%;flex-shrink:0;
+  background:conic-gradient(
+    var(--red) 0deg 130deg,
+    var(--blue) 130deg 220deg,
+    var(--teal) 220deg 270deg,
+    var(--purple) 270deg 360deg
+  );
+  display:grid;place-items:center;position:relative;
+}
+.donut::after{
+  content:'';position:absolute;
+  width:65px;height:65px;border-radius:50%;background:#fff;
+}
+.donut-center{position:relative;z-index:1;text-align:center}
+.dc-num{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:900}
+.dc-lbl{font-size:.6rem;color:var(--muted)}
+.donut-legend{display:flex;flex-direction:column;gap:7px;flex:1}
+.dl-item{display:flex;align-items:center;gap:7px;font-size:.75rem}
+.dl-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.dl-label{color:var(--slate);flex:1}
+.dl-pct{font-weight:700;color:var(--ink)}
+
+/* ══════ PENDING APPROVALS ══════ */
+.approval-list{display:flex;flex-direction:column}
+.approval-item{
+  display:flex;align-items:center;gap:12px;
+  padding:13px 20px;border-bottom:1px solid var(--border2);
+  transition:background .2s;
+}
+.approval-item:last-child{border-bottom:none}
+.approval-item:hover{background:#FAFBFF}
+.appr-av{
+  width:38px;height:38px;border-radius:10px;flex-shrink:0;
+  display:grid;place-items:center;font-size:.95rem;color:#fff;font-weight:700;
+}
+.appr-info{flex:1}
+.appr-name{font-weight:600;font-size:.84rem;margin-bottom:1px}
+.appr-sub{font-size:.72rem;color:var(--muted)}
+.appr-btns{display:flex;gap:6px}
+.btn-approve{
+  padding:6px 12px;border-radius:7px;font-size:.75rem;font-weight:700;
+  background:var(--green-lt);color:var(--green);border:1px solid #A7F3D0;
+  cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;
+}
+.btn-approve:hover{background:var(--green);color:#fff}
+.btn-reject{
+  padding:6px 12px;border-radius:7px;font-size:.75rem;font-weight:700;
+  background:var(--red-lt);color:var(--red);border:1px solid #FECACA;
+  cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;
+}
+.btn-reject:hover{background:var(--red);color:#fff}
+
+/* ══════ BOTTOM ROW ══════ */
+.bottom-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;margin-bottom:18px}
+
+/* Activity feed */
+.feed-list{display:flex;flex-direction:column}
+.feed-item{
+  display:flex;gap:10px;align-items:flex-start;
+  padding:12px 18px;border-bottom:1px solid var(--border2);
+}
+.feed-item:last-child{border-bottom:none}
+.feed-ico{
+  width:30px;height:30px;border-radius:8px;flex-shrink:0;
+  display:grid;place-items:center;font-size:.85rem;margin-top:1px;
+}
+.feed-body{flex:1}
+.feed-title{font-size:.8rem;font-weight:600;margin-bottom:1px}
+.feed-sub{font-size:.7rem;color:var(--muted);line-height:1.4}
+.feed-time{font-size:.65rem;color:var(--muted);white-space:nowrap;margin-top:2px}
+
+/* Reports */
+.report-list{display:flex;flex-direction:column;gap:0}
+.report-row{
+  display:flex;align-items:center;gap:12px;
+  padding:13px 18px;border-bottom:1px solid var(--border2);
+}
+.report-row:last-child{border-bottom:none}
+.rr-icon{font-size:1.2rem}
+.rr-info{flex:1}
+.rr-title{font-size:.82rem;font-weight:600;margin-bottom:2px}
+.rr-val{font-size:.7rem;color:var(--muted)}
+.rr-bar{height:4px;background:var(--border);border-radius:99px;margin-top:6px;overflow:hidden}
+.rr-fill{height:100%;border-radius:99px}
+.rf-purple{background:linear-gradient(90deg,var(--purple),var(--purple2))}
+.rf-red{background:linear-gradient(90deg,var(--red),var(--red2))}
+.rf-green{background:linear-gradient(90deg,var(--green),#059669)}
+.rf-blue{background:linear-gradient(90deg,var(--blue),#3B82F6)}
+.rf-amber{background:linear-gradient(90deg,var(--amber),#D97706)}
+
+/* System status */
+.sys-list{padding:4px 0}
+.sys-item{
+  display:flex;align-items:center;gap:12px;
+  padding:11px 18px;border-bottom:1px solid var(--border2);
+}
+.sys-item:last-child{border-bottom:none}
+.sys-icon{font-size:1.1rem}
+.sys-info{flex:1}
+.sys-name{font-size:.82rem;font-weight:600;margin-bottom:1px}
+.sys-val{font-size:.7rem;color:var(--muted)}
+.sys-status{font-size:.7rem;font-weight:700;padding:2px 8px;border-radius:99px}
+.ss-ok{background:var(--green-lt);color:var(--green)}
+.ss-warn{background:var(--amber-lt);color:var(--amber)}
+.ss-err{background:var(--red-lt);color:var(--red)}
+
+/* Toast */
+.toast{
+  position:fixed;bottom:22px;right:22px;z-index:999;
+  background:var(--ink);color:#fff;padding:12px 17px;border-radius:11px;
+  display:flex;align-items:center;gap:10px;
+  box-shadow:0 8px 28px rgba(0,0,0,.22);
+  transform:translateY(80px);opacity:0;max-width:320px;
+  transition:all .35s cubic-bezier(.175,.885,.32,1.275);
+}
+.toast.show{transform:translateY(0);opacity:1}
+.toast-close{background:none;border:none;color:rgba(255,255,255,.45);cursor:pointer;padding:0 0 0 6px}
+
+/* Confirm modal */
+.modal-ov{position:fixed;inset:0;background:rgba(15,23,42,.65);z-index:500;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.modal-ov.show{display:flex}
+.modal{background:#fff;border-radius:18px;padding:28px;max-width:400px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.25);animation:pop .3s cubic-bezier(.175,.885,.32,1.275)}
+@keyframes pop{from{transform:scale(.9);opacity:0}to{transform:scale(1);opacity:1}}
+.modal-ico{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;font-size:1.6rem;margin:0 auto 16px}
+.modal-ico.ic-delete{background:var(--red-lt)}
+.modal-ico.ic-suspend{background:var(--amber-lt)}
+.modal h3{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:900;text-align:center;margin-bottom:7px}
+.modal p{font-size:.86rem;color:var(--muted);text-align:center;line-height:1.6;margin-bottom:20px}
+.modal-btns{display:flex;gap:10px}
+.btn-cancel{flex:1;padding:10px;border-radius:9px;background:var(--ghost);color:var(--slate);font-weight:600;border:1px solid var(--border);cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.88rem}
+.btn-confirm-del{flex:1;padding:10px;border-radius:9px;background:var(--red);color:#fff;font-weight:700;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.88rem}
+.btn-confirm-sus{flex:1;padding:10px;border-radius:9px;background:var(--amber);color:#fff;font-weight:700;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.88rem}
+
+/* Responsive */
+@media(max-width:1200px){.stats-grid{grid-template-columns:repeat(3,1fr)}.bottom-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:1000px){.main-grid{grid-template-columns:1fr}.stats-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:860px){
+  .sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}
+  .main{margin-left:0}.menu-btn{display:block}
+  .bottom-grid{grid-template-columns:1fr}
+}
+@media(max-width:600px){.stats-grid{grid-template-columns:1fr 1fr}.content{padding:14px 14px}.topbar{padding:0 14px}}
+</style>
+</head>
+<body>
+
+<!-- ══════ SIDEBAR ══════ -->
+<aside class="sidebar" id="sidebar">
+  <a href="index.html" class="sb-logo">
+    <div class="lm">🛡️</div>
+    <span class="lt">Life<span>Share</span></span>
+  </a>
+
+  <div class="admin-badge">
+    <div class="ab-avatar">🛡️</div>
+    <div>
+      <div class="ab-name">Super Admin</div>
+      <div class="ab-role"><div class="ab-dot"></div> Online · Full Access</div>
+    </div>
+  </div>
+
+  <nav class="sb-nav">
+    <div class="nav-section">Dashboard</div>
+    <a class="ni active" onclick="navClick(this)"><span class="ni-icon">🏠</span> Overview</a>
+    <a class="ni" onclick="navClick(this)"><span class="ni-icon">📊</span> Analytics</a>
+    <a class="ni" onclick="navClick(this)"><span class="ni-icon">📈</span> Reports</a>
+
+    <div class="nav-section">User Management</div>
+    <a class="ni" onclick="navClick(this)"><span class="ni-icon">👥</span> All Users <span class="nb nb-green">1,247</span></a>
+    <a class="ni" onclick="navClick(this)"><span class="ni-icon">⏳</span> Pending Approvals <span class="nb nb-amber">8</span></a>
+    <a class="ni" onclick="navClick(this)"><span class="ni-icon">✅</span> Verified Users</a>
+    <a class="ni" onclick="navClick(this)"><span class="ni-icon">🚫</span> Suspended <span class="nb nb-red">3</span></a>
+
+    <div class="nav-section">Content</div>
+    <a class="ni" onclick="navClick(this)"><span class="ni-icon">🩸</span> Blood Posts</a>
+    <a class="ni" onclick="navClick(this)"><span class="ni-icon">💊</span> Medicine Posts</a>
+    <a class="ni" onclick="navClick(this)"><span class="ni-icon">🚨</span> Flagged Content <span class="nb nb-red">2</span></a>
+
+    <div class="nav-section">System</div>
+    <a class="ni" onclick="navClick(this)"><span class="ni-icon">⚙️</span> Settings</a>
+    <a class="ni" onclick="navClick(this)"><span class="ni-icon">🔔</span> Notifications <span class="nb nb-red">5</span></a>
+    <a class="ni" onclick="navClick(this)"><span class="ni-icon">🔒</span> Security Logs</a>
+  </nav>
+
+  <div class="sb-bottom">
+    <button class="btn-logout" onclick="window.location.href='login.html'">🚪 Log Out</button>
+  </div>
+</aside>
+
+<!-- ══════ MAIN ══════ -->
+<div class="main">
+
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="tl">
+      <button class="menu-btn" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+      <div>
+        <div class="pt">Admin Panel</div>
+        <div class="ps">LifeShare Platform Management</div>
+      </div>
+    </div>
+    <div class="tr">
+      <span class="tb-time" id="live-time"></span>
+      <button class="export-btn" onclick="showToast('📊 Report exported as PDF!')">⬇ Export Report</button>
+      <div class="icon-btn" onclick="showToast('📣 5 new system notifications!')">🔔<div class="notif-dot"></div></div>
+      <div class="tb-av">🛡️</div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- Banner -->
+    <div class="admin-banner">
+      <div class="banner-bg"></div><div class="banner-bg2"></div>
+      <div class="bl">
+        <div class="b-chip">🛡️ Admin Control Centre</div>
+        <div class="b-title">Platform Overview — March 2026</div>
+        <div class="b-sub">Total 1,247 users registered. 8 pending approvals and 2 flagged posts require your attention today.</div>
+      </div>
+      <div class="br">
+        <div class="b-stat"><div class="b-num">1,247</div><div class="b-label">Total Users</div></div>
+        <div class="b-stat"><div class="b-num">8</div><div class="b-label">Pending</div></div>
+        <div class="b-stat"><div class="b-num">2</div><div class="b-label">Flagged</div></div>
+        <div class="b-stat"><div class="b-num">99%</div><div class="b-label">Uptime</div></div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="sc c-purple">
+        <div class="sc-ico i-pu">👥</div>
+        <div class="sc-num">1,247</div>
+        <div class="sc-lbl">Total Users</div>
+        <div class="sc-ch ch-up">↑ +48 this month</div>
+      </div>
+      <div class="sc c-red">
+        <div class="sc-ico i-re">🩸</div>
+        <div class="sc-num">342</div>
+        <div class="sc-lbl">Blood Donors</div>
+        <div class="sc-ch ch-up">↑ +12 this week</div>
+      </div>
+      <div class="sc c-green">
+        <div class="sc-ico i-gr">❤️</div>
+        <div class="sc-num">589</div>
+        <div class="sc-lbl">Lives Helped</div>
+        <div class="sc-ch ch-up">↑ +23 this month</div>
+      </div>
+      <div class="sc c-amber">
+        <div class="sc-ico i-am">⏳</div>
+        <div class="sc-num">8</div>
+        <div class="sc-lbl">Pending Approvals</div>
+        <div class="sc-ch ch-nu">⚠️ Action needed</div>
+      </div>
+      <div class="sc c-blue">
+        <div class="sc-ico i-bl">💊</div>
+        <div class="sc-num">2,401</div>
+        <div class="sc-lbl">Medicines Shared</div>
+        <div class="sc-ch ch-up">↑ +156 this month</div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab active" onclick="setTab(this,'users')">👥 Users</button>
+      <button class="tab" onclick="setTab(this,'approvals')">⏳ Approvals</button>
+      <button class="tab" onclick="setTab(this,'posts')">📋 Posts</button>
+      <button class="tab" onclick="setTab(this,'reports')">📊 Reports</button>
+    </div>
+
+    <!-- Main 2-col -->
+    <div class="main-grid">
+
+      <!-- Users Table -->
+      <div class="card" id="tab-users">
+        <div class="ch">
+          <div><div class="ct">User Management</div><div class="cs">Manage all registered users</div></div>
+          <span class="cb b-pu">FR11</span>
+        </div>
+        <div class="table-controls">
+          <div class="search-wrap">
+            <input type="text" placeholder="Search users by name or email..."/>
+          </div>
+          <select class="filter-select">
+            <option>All Roles</option>
+            <option>Donor</option>
+            <option>Recipient</option>
+            <option>Hospital/NGO</option>
+          </select>
+          <select class="filter-select">
+            <option>All Status</option>
+            <option>Active</option>
+            <option>Pending</option>
+            <option>Suspended</option>
+          </select>
+          <button class="btn-sm btn-purple" onclick="showToast('➕ Add user form opening...')">+ Add User</button>
+        </div>
+        <div style="overflow-x:auto">
+          <table>
+            <thead>
+              <tr>
+                <th>User</th><th>Role</th><th>Blood</th>
+                <th>Status</th><th>Verified</th><th>Joined</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><div class="user-cell"><div class="user-av av-red">MA</div><div><div class="user-name">Muhammad Aqib</div><div class="user-email">aqib@email.com</div></div></div></td>
+                <td><span class="role-pill rp-donor">Donor</span></td>
+                <td><strong>O+</strong></td>
+                <td><span class="status-pill sp-active">Active</span></td>
+                <td><span class="verified-chip vc-yes">✓ Yes</span></td>
+                <td style="font-size:.76rem;color:var(--muted)">Jan 2026</td>
+                <td><div class="action-btns">
+                  <button class="ab-btn ab-view" onclick="showToast('👁️ Viewing Aqib\'s profile...')">View</button>
+                  <button class="ab-btn ab-suspend" onclick="openModal('suspend','Muhammad Aqib')">Suspend</button>
+                  <button class="ab-btn ab-delete" onclick="openModal('delete','Muhammad Aqib')">Delete</button>
+                </div></td>
+              </tr>
+              <tr>
+                <td><div class="user-cell"><div class="user-av av-blue">SF</div><div><div class="user-name">Sara Fatima</div><div class="user-email">sara@email.com</div></div></div></td>
+                <td><span class="role-pill rp-recipient">Recipient</span></td>
+                <td><strong>O+</strong></td>
+                <td><span class="status-pill sp-active">Active</span></td>
+                <td><span class="verified-chip vc-yes">✓ Yes</span></td>
+                <td style="font-size:.76rem;color:var(--muted)">Feb 2026</td>
+                <td><div class="action-btns">
+                  <button class="ab-btn ab-view" onclick="showToast('👁️ Viewing Sara\'s profile...')">View</button>
+                  <button class="ab-btn ab-suspend" onclick="openModal('suspend','Sara Fatima')">Suspend</button>
+                  <button class="ab-btn ab-delete" onclick="openModal('delete','Sara Fatima')">Delete</button>
+                </div></td>
+              </tr>
+              <tr>
+                <td><div class="user-cell"><div class="user-av av-teal">CH</div><div><div class="user-name">City Hospital</div><div class="user-email">admin@cityhospital.pk</div></div></div></td>
+                <td><span class="role-pill rp-hospital">Hospital</span></td>
+                <td><strong>—</strong></td>
+                <td><span class="status-pill sp-active">Active</span></td>
+                <td><span class="verified-chip vc-yes">✓ Yes</span></td>
+                <td style="font-size:.76rem;color:var(--muted)">Dec 2025</td>
+                <td><div class="action-btns">
+                  <button class="ab-btn ab-view" onclick="showToast('👁️ Viewing City Hospital profile...')">View</button>
+                  <button class="ab-btn ab-suspend" onclick="openModal('suspend','City Hospital')">Suspend</button>
+                </div></td>
+              </tr>
+              <tr>
+                <td><div class="user-cell"><div class="user-av av-amber">NK</div><div><div class="user-name">Nadia Khan</div><div class="user-email">nadia@email.com</div></div></div></td>
+                <td><span class="role-pill rp-donor">Donor</span></td>
+                <td><strong>B+</strong></td>
+                <td><span class="status-pill sp-pending">Pending</span></td>
+                <td><span class="verified-chip vc-no">⏳ No</span></td>
+                <td style="font-size:.76rem;color:var(--muted)">Mar 2026</td>
+                <td><div class="action-btns">
+                  <button class="ab-btn ab-approve" onclick="showToast('✅ Nadia Khan approved!')">Approve</button>
+                  <button class="ab-btn ab-delete" onclick="openModal('delete','Nadia Khan')">Reject</button>
+                </div></td>
+              </tr>
+              <tr>
+                <td><div class="user-cell"><div class="user-av av-purple">HM</div><div><div class="user-name">Hassan Mirza</div><div class="user-email">hassan@email.com</div></div></div></td>
+                <td><span class="role-pill rp-donor">Donor</span></td>
+                <td><strong>A-</strong></td>
+                <td><span class="status-pill sp-suspended">Suspended</span></td>
+                <td><span class="verified-chip vc-no">✗ No</span></td>
+                <td style="font-size:.76rem;color:var(--muted)">Nov 2025</td>
+                <td><div class="action-btns">
+                  <button class="ab-btn ab-approve" onclick="showToast('✅ Hassan Mirza reinstated!')">Reinstate</button>
+                  <button class="ab-btn ab-delete" onclick="openModal('delete','Hassan Mirza')">Delete</button>
+                </div></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="pagination">
+          <span class="pg-info">Showing 5 of 1,247 users</span>
+          <div class="pg-btns">
+            <button class="pg-btn">‹</button>
+            <button class="pg-btn active">1</button>
+            <button class="pg-btn">2</button>
+            <button class="pg-btn">3</button>
+            <button class="pg-btn">…</button>
+            <button class="pg-btn">125</button>
+            <button class="pg-btn">›</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right column -->
+      <div style="display:flex;flex-direction:column;gap:18px">
+
+        <!-- Donations Bar Chart -->
+        <div class="chart-card">
+          <div class="ch">
+            <div><div class="ct">Monthly Donations</div><div class="cs">Blood donations per month</div></div>
+            <span class="cb b-re">FR13</span>
+          </div>
+          <div class="chart-body">
+            <div class="bar-chart" id="bar-chart"></div>
+            <div style="display:flex;gap:14px;justify-content:center;font-size:.72rem;color:var(--muted)">
+              <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:3px;background:var(--purple);display:inline-block"></span>Donations</span>
+              <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:3px;background:var(--red);display:inline-block"></span>Requests</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- User Roles Donut -->
+        <div class="chart-card">
+          <div class="ch">
+            <div><div class="ct">User Breakdown</div><div class="cs">By role type</div></div>
+            <span class="cb b-pu">1,247 Total</span>
+          </div>
+          <div class="donut-wrap">
+            <div class="donut">
+              <div class="donut-center">
+                <div class="dc-num">1,247</div>
+                <div class="dc-lbl">Users</div>
+              </div>
+            </div>
+            <div class="donut-legend">
+              <div class="dl-item"><div class="dl-dot" style="background:var(--red)"></div><span class="dl-label">Donors</span><span class="dl-pct">342 (36%)</span></div>
+              <div class="dl-item"><div class="dl-dot" style="background:var(--blue)"></div><span class="dl-label">Recipients</span><span class="dl-pct">498 (25%)</span></div>
+              <div class="dl-item"><div class="dl-dot" style="background:var(--teal)"></div><span class="dl-label">Hospital/NGO</span><span class="dl-pct">156 (14%)</span></div>
+              <div class="dl-item"><div class="dl-dot" style="background:var(--purple)"></div><span class="dl-label">Admin</span><span class="dl-pct">251 (25%)</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pending Approvals -->
+        <div class="chart-card">
+          <div class="ch">
+            <div><div class="ct">Pending Approvals</div><div class="cs">Accounts needing review</div></div>
+            <span class="cb b-am">8 Waiting</span>
+          </div>
+          <div class="approval-list">
+            <div class="approval-item">
+              <div class="appr-av av-red">ZA</div>
+              <div class="appr-info">
+                <div class="appr-name">Zara Ahmed</div>
+                <div class="appr-sub">Donor · O+ · Karachi · 2h ago</div>
+              </div>
+              <div class="appr-btns">
+                <button class="btn-approve" onclick="showToast('✅ Zara Ahmed approved!')">✓</button>
+                <button class="btn-reject" onclick="showToast('❌ Zara Ahmed rejected.')">✗</button>
+              </div>
+            </div>
+            <div class="approval-item">
+              <div class="appr-av av-blue">AR</div>
+              <div class="appr-info">
+                <div class="appr-name">Ali Raza</div>
+                <div class="appr-sub">Recipient · A+ · Lahore · 5h ago</div>
+              </div>
+              <div class="appr-btns">
+                <button class="btn-approve" onclick="showToast('✅ Ali Raza approved!')">✓</button>
+                <button class="btn-reject" onclick="showToast('❌ Ali Raza rejected.')">✗</button>
+              </div>
+            </div>
+            <div class="approval-item">
+              <div class="appr-av av-teal">MH</div>
+              <div class="appr-info">
+                <div class="appr-name">Mayo Hospital NGO</div>
+                <div class="appr-sub">Hospital/NGO · Lahore · 1d ago</div>
+              </div>
+              <div class="appr-btns">
+                <button class="btn-approve" onclick="showToast('✅ Mayo Hospital approved!')">✓</button>
+                <button class="btn-reject" onclick="showToast('❌ Mayo Hospital rejected.')">✗</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Bottom Row -->
+    <div class="bottom-grid">
+
+      <!-- Activity Feed -->
+      <div class="card">
+        <div class="ch">
+          <div><div class="ct">System Activity</div><div class="cs">Live platform events</div></div>
+          <span class="cb b-pu">Live</span>
+        </div>
+        <div class="feed-list">
+          <div class="feed-item">
+            <div class="feed-ico i-pu">👤</div>
+            <div class="feed-body"><div class="feed-title">New user registered</div><div class="feed-sub">Zara Ahmed — Donor · Karachi</div></div>
+            <div class="feed-time">2m ago</div>
+          </div>
+          <div class="feed-item">
+            <div class="feed-ico i-re">🩸</div>
+            <div class="feed-body"><div class="feed-title">Emergency blood request</div><div class="feed-sub">Sara F. — O+ · Multan · Emergency</div></div>
+            <div class="feed-time">5m ago</div>
+          </div>
+          <div class="feed-item">
+            <div class="feed-ico i-gr">✅</div>
+            <div class="feed-body"><div class="feed-title">Donation completed</div><div class="feed-sub">Aqib → Sara · O+ · 2 units</div></div>
+            <div class="feed-time">18m ago</div>
+          </div>
+          <div class="feed-item">
+            <div class="feed-ico i-am">💊</div>
+            <div class="feed-body"><div class="feed-title">Medicine post added</div><div class="feed-sub">Paracetamol 500mg · Lahore</div></div>
+            <div class="feed-time">32m ago</div>
+          </div>
+          <div class="feed-item">
+            <div class="feed-ico i-re" style="background:var(--red-lt)">🚨</div>
+            <div class="feed-body"><div class="feed-title">Post flagged</div><div class="feed-sub">Suspicious listing reported by 2 users</div></div>
+            <div class="feed-time">1h ago</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Platform Reports -->
+      <div class="card">
+        <div class="ch">
+          <div><div class="ct">Platform Reports</div><div class="cs">Key metrics summary</div></div>
+          <span class="cb b-bl">FR13</span>
+        </div>
+        <div class="report-list">
+          <div class="report-row">
+            <span class="rr-icon">👥</span>
+            <div class="rr-info">
+              <div class="rr-title">Total Registered Users</div>
+              <div class="rr-val">1,247 users · 48 new this month</div>
+              <div class="rr-bar"><div class="rr-fill rf-purple" style="width:82%"></div></div>
+            </div>
+          </div>
+          <div class="report-row">
+            <span class="rr-icon">🩸</span>
+            <div class="rr-info">
+              <div class="rr-title">Total Blood Donations</div>
+              <div class="rr-val">589 donations · 23 this month</div>
+              <div class="rr-bar"><div class="rr-fill rf-red" style="width:65%"></div></div>
+            </div>
+          </div>
+          <div class="report-row">
+            <span class="rr-icon">✅</span>
+            <div class="rr-info">
+              <div class="rr-title">Verified vs Unverified</div>
+              <div class="rr-val">892 verified · 355 unverified</div>
+              <div class="rr-bar"><div class="rr-fill rf-green" style="width:72%"></div></div>
+            </div>
+          </div>
+          <div class="report-row">
+            <span class="rr-icon">💊</span>
+            <div class="rr-info">
+              <div class="rr-title">Medicines Shared</div>
+              <div class="rr-val">2,401 medicines · 156 this month</div>
+              <div class="rr-bar"><div class="rr-fill rf-blue" style="width:90%"></div></div>
+            </div>
+          </div>
+          <div class="report-row">
+            <span class="rr-icon">📍</span>
+            <div class="rr-info">
+              <div class="rr-title">Successful Matches</div>
+              <div class="rr-val">98% match success rate</div>
+              <div class="rr-bar"><div class="rr-fill rf-amber" style="width:98%"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- System Status -->
+      <div class="card">
+        <div class="ch">
+          <div><div class="ct">System Status</div><div class="cs">Server & service health</div></div>
+          <span class="cb b-gr">All Systems OK</span>
+        </div>
+        <div class="sys-list">
+          <div class="sys-item">
+            <span class="sys-icon">🌐</span>
+            <div class="sys-info"><div class="sys-name">Web Server</div><div class="sys-val">Response time: 120ms</div></div>
+            <span class="sys-status ss-ok">✓ Online</span>
+          </div>
+          <div class="sys-item">
+            <span class="sys-icon">🗄️</span>
+            <div class="sys-info"><div class="sys-name">Database</div><div class="sys-val">MySQL · 1.2M records</div></div>
+            <span class="sys-status ss-ok">✓ Online</span>
+          </div>
+          <div class="sys-item">
+            <span class="sys-icon">📍</span>
+            <div class="sys-info"><div class="sys-name">GPS / Maps API</div><div class="sys-val">Google Maps · Active</div></div>
+            <span class="sys-status ss-ok">✓ Active</span>
+          </div>
+          <div class="sys-item">
+            <span class="sys-icon">🔔</span>
+            <div class="sys-info"><div class="sys-name">Push Notifications</div><div class="sys-val">Firebase · 99.8% delivery</div></div>
+            <span class="sys-status ss-ok">✓ Active</span>
+          </div>
+          <div class="sys-item">
+            <span class="sys-icon">✉️</span>
+            <div class="sys-info"><div class="sys-name">Email Service</div><div class="sys-val">Queue: 12 pending</div></div>
+            <span class="sys-status ss-warn">⚠ Slow</span>
+          </div>
+          <div class="sys-item">
+            <span class="sys-icon">🔒</span>
+            <div class="sys-info"><div class="sys-name">SSL / Security</div><div class="sys-val">TLS 1.3 · JWT Active</div></div>
+            <span class="sys-status ss-ok">✓ Secure</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<!-- Confirm Modal -->
+<div class="modal-ov" id="confirm-modal">
+  <div class="modal">
+    <div class="modal-ico" id="modal-ico">🗑️</div>
+    <h3 id="modal-title">Confirm Action</h3>
+    <p id="modal-msg">Are you sure you want to proceed?</p>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button id="modal-confirm-btn" onclick="confirmAction()">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">
+  <span id="toast-text">Done!</span>
+  <button class="toast-close" onclick="hideToast()">✕</button>
+</div>
+
+<script>
+// Live clock
+function tick(){
+  document.getElementById('live-time').textContent =
+    new Date().toLocaleTimeString('en-PK',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}
+tick(); setInterval(tick,1000);
+
+// Sidebar nav
+function navClick(el){
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// Tabs
+function setTab(el){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  showToast('📋 Tab switched: ' + el.textContent.trim());
+}
+
+// Bar chart render
+const months = ['Sep','Oct','Nov','Dec','Jan','Feb','Mar'];
+const donations=[18,24,31,28,35,42,38];
+const requests=[22,29,36,32,41,48,44];
+const maxV = Math.max(...donations,...requests);
+function buildChart(){
+  const container=document.getElementById('bar-chart');
+  container.innerHTML='';
+  months.forEach((m,i)=>{
+    const col=document.createElement('div');
+    col.className='bar-col';
+    const dh=Math.round((donations[i]/maxV)*100);
+    const rh=Math.round((requests[i]/maxV)*100);
+    col.innerHTML=`
+      <div style="display:flex;gap:3px;align-items:flex-end;flex:1;width:100%">
+        <div class="bar bar-purple" style="height:${dh}%;flex:1" title="${donations[i]} donations"></div>
+        <div class="bar bar-red" style="height:${rh}%;flex:1" title="${requests[i]} requests"></div>
+      </div>
+      <span class="bar-lbl">${m}</span>`;
+    container.appendChild(col);
+  });
+}
+buildChart();
+
+// Modal
+let currentAction='',currentUser='';
+function openModal(action,user){
+  currentAction=action; currentUser=user;
+  const ico=document.getElementById('modal-ico');
+  const title=document.getElementById('modal-title');
+  const msg=document.getElementById('modal-msg');
+  const btn=document.getElementById('modal-confirm-btn');
+  if(action==='delete'){
+    ico.textContent='🗑️';ico.className='modal-ico ic-delete';
+    title.textContent='Delete User';
+    msg.textContent=`Are you sure you want to permanently delete "${user}"? This cannot be undone.`;
+    btn.className='btn-confirm-del';btn.textContent='Delete User';
+  } else {
+    ico.textContent='⚠️';ico.className='modal-ico ic-suspend';
+    title.textContent='Suspend User';
+    msg.textContent=`Are you sure you want to suspend "${user}"? They will lose access until reinstated.`;
+    btn.className='btn-confirm-sus';btn.textContent='Suspend User';
+  }
+  document.getElementById('confirm-modal').classList.add('show');
+}
+function closeModal(){document.getElementById('confirm-modal').classList.remove('show')}
+function confirmAction(){
+  closeModal();
+  const msg = currentAction==='delete'
+    ? `🗑️ "${currentUser}" has been deleted.`
+    : `⚠️ "${currentUser}" has been suspended.`;
+  showToast(msg);
+}
+
+// Toast
+let toastTimer;
+function showToast(msg){
+  const t=document.getElementById('toast');
+  document.getElementById('toast-text').textContent=msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(hideToast,3500);
+}
+function hideToast(){document.getElementById('toast').classList.remove('show')}
+</script>
+
+
+<!-- connect frontend to backend -->
+<script>
+document.addEventListener('DOMContentLoaded', async function() {
+
+  // ═══════════════════════════
+  // CHECK IF USER IS LOGGED IN
+  // ═══════════════════════════
+  // const token = localStorage.getItem('token');
+  // if (!token) {
+  //   alert('⚠️ Please login first!');
+  //   window.location.href = 'login.html';
+  //   return;
+  // }
+
+const token = localStorage.getItem('token');
+const role = localStorage.getItem('role');
+const user = JSON.parse(localStorage.getItem('user') || '{}');
+
+// ✅ Only YOUR email can access admin panel
+const ADMIN_EMAIL = 'shahzadkhan749646@gmail.com'; // ← Change this to YOUR email
+
+if (!token) {
+  alert('⚠️ Please login first!');
+  window.location.href = 'login.html';
+  return;
+}
+
+if (role !== 'admin' || user.email !== ADMIN_EMAIL) {
+  alert('🚫 Access Denied! You are not authorized to access this page.');
+  window.location.href = 'login.html';
+  return;
+}
+
+
+
+
+
+  // ═══════════════════════════
+  // UPDATE ADMIN NAME
+  // ═══════════════════════════
+  const user_name = localStorage.getItem('user_name') || 'Admin';
+  const abName = document.querySelector('.ab-name');
+  if(abName) abName.textContent = user_name;
+
+  // ═══════════════════════════
+  // LOAD DASHBOARD STATS
+  // ═══════════════════════════
+  try {
+    const response = await fetch('http://127.0.0.1:5000/api/admin/stats');
+    const data = await response.json();
+
+    if (data.success) {
+      const stats = data.stats;
+
+      // Update all stat card numbers
+      const scNums = document.querySelectorAll('.sc-num');
+      if(scNums[0]) scNums[0].textContent = stats.total_users;
+      if(scNums[1]) scNums[1].textContent = stats.total_donors;
+      if(scNums[3]) scNums[3].textContent = stats.pending_approvals;
+      if(scNums[4]) scNums[4].textContent = stats.total_medicines;
+
+      // Update banner stats
+      const bNums = document.querySelectorAll('.b-num');
+      if(bNums[0]) bNums[0].textContent = stats.total_users;
+      if(bNums[1]) bNums[1].textContent = stats.pending_approvals;
+
+      // Update donut chart legend with real numbers
+      const dlPcts = document.querySelectorAll('.dl-pct');
+      if(dlPcts[0]) dlPcts[0].textContent = stats.total_donors + ' donors';
+      if(dlPcts[1]) dlPcts[1].textContent = stats.total_recipients + ' recipients';
+
+      // Update donut center
+      const dcNum = document.querySelector('.dc-num');
+      if(dcNum) dcNum.textContent = stats.total_users;
+
+      // Update pending approvals badge
+      const cbBadges = document.querySelectorAll('.cb');
+      cbBadges.forEach(el => {
+        if(el.textContent.includes('Waiting')) {
+          el.textContent = stats.pending_approvals + ' Waiting';
+        }
+      });
+
+      console.log('✅ Stats loaded:', stats);
+    }
+  } catch (error) {
+    console.log('Could not load admin stats:', error);
+  }
+
+  // ═══════════════════════════
+  // LOAD REAL USERS TABLE
+  // ═══════════════════════════
+  try {
+    const response = await fetch('http://127.0.0.1:5000/api/admin/users');
+    const data = await response.json();
+
+    if (data.success && data.users.length > 0) {
+      const tbody = document.querySelector('tbody');
+      if(tbody) {
+        tbody.innerHTML = '';
+        const colors = ['av-red','av-blue','av-teal','av-amber','av-purple'];
+        data.users.slice(0, 10).forEach((user, index) => {
+          const initials = user.full_name.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
+          const color = colors[index % colors.length];
+          const roleClass = {
+            'donor': 'rp-donor',
+            'recipient': 'rp-recipient',
+            'hospital': 'rp-hospital',
+            'hospital/ngo': 'rp-hospital',
+            'admin': 'rp-admin'
+          }[user.role?.toLowerCase()] || 'rp-donor';
+
+          const statusClass = user.is_active ? 'sp-active' : 'sp-suspended';
+          const statusText = user.is_active ? 'Active' : 'Suspended';
+          const verifiedClass = user.is_verified ? 'vc-yes' : 'vc-no';
+          const verifiedText = user.is_verified ? '✓ Yes' : '⏳ No';
+          const joinDate = new Date(user.created_at).toLocaleDateString('en-PK', {month:'short', year:'numeric'});
+
+          tbody.innerHTML += `
+            <tr>
+              <td>
+                <div class="user-cell">
+                  <div class="user-av ${color}">${initials}</div>
+                  <div>
+                    <div class="user-name">${user.full_name}</div>
+                    <div class="user-email">${user.email}</div>
+                  </div>
+                </div>
+              </td>
+              <td><span class="role-pill ${roleClass}">${user.role}</span></td>
+              <td><strong>${user.blood_group || '—'}</strong></td>
+              <td><span class="status-pill ${statusClass}">${statusText}</span></td>
+              <td><span class="verified-chip ${verifiedClass}">${verifiedText}</span></td>
+              <td style="font-size:.76rem;color:var(--muted)">${joinDate}</td>
+              <td>
+                <div class="action-btns">
+                  <button class="ab-btn ab-view" onclick="showToast('👁️ Viewing ${user.full_name}')">View</button>
+                  ${!user.is_verified ? `<button class="ab-btn ab-approve" onclick="approveUser(${user.id})">Approve</button>` : ''}
+                  ${user.is_active ? `<button class="ab-btn ab-suspend" onclick="suspendUserAction(${user.id}, '${user.full_name}')">Suspend</button>` : `<button class="ab-btn ab-approve" onclick="approveUser(${user.id})">Reinstate</button>`}
+                  <button class="ab-btn ab-delete" onclick="deleteUserAction(${user.id}, '${user.full_name}')">Delete</button>
+                </div>
+              </td>
+            </tr>
+          `;
+        });
+
+        // Update pagination info
+        const pgInfo = document.querySelector('.pg-info');
+        if(pgInfo) pgInfo.textContent = `Showing ${Math.min(10, data.total)} of ${data.total} users`;
+      }
+    }
+  } catch (error) {
+    console.log('Could not load users:', error);
+  }
+
+  // ═══════════════════════════
+  // LOAD PENDING APPROVALS
+  // ═══════════════════════════
+  try {
+    const response = await fetch('http://127.0.0.1:5000/api/admin/users');
+    const data = await response.json();
+
+    if(data.success) {
+      const pendingUsers = data.users.filter(u => !u.is_verified);
+      const approvalList = document.querySelector('.approval-list');
+
+      if(approvalList && pendingUsers.length > 0) {
+        approvalList.innerHTML = '';
+        const colors = ['av-red','av-blue','av-teal','av-amber','av-purple'];
+        pendingUsers.slice(0,5).forEach((user, index) => {
+          const initials = user.full_name.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
+          const color = colors[index % colors.length];
+          approvalList.innerHTML += `
+            <div class="approval-item">
+              <div class="appr-av ${color}">${initials}</div>
+              <div class="appr-info">
+                <div class="appr-name">${user.full_name}</div>
+                <div class="appr-sub">${user.role} · ${user.blood_group || 'N/A'} · ${user.city || 'N/A'}</div>
+              </div>
+              <div class="appr-btns">
+                <button class="btn-approve" onclick="approveUser(${user.id})">✓</button>
+                <button class="btn-reject" onclick="deleteUserAction(${user.id}, '${user.full_name}')">✗</button>
+              </div>
+            </div>
+          `;
+        });
+      } else if(approvalList && pendingUsers.length === 0) {
+        approvalList.innerHTML = '<div style="padding:20px;text-align:center;color:var(--muted);font-size:.85rem">✅ No pending approvals!</div>';
+      }
+    }
+  } catch (error) {
+    console.log('Could not load pending approvals:', error);
+  }
+
+  // ═══════════════════════════
+  // APPROVE USER
+  // ═══════════════════════════
+  window.approveUser = async function(id) {
+    try {
+      const response = await fetch(`http://127.0.0.1:5000/api/admin/users/${id}/approve`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      const data = await response.json();
+      if (data.success) {
+        showToast('✅ User approved successfully!');
+        setTimeout(() => location.reload(), 1500);
+      }
+    } catch (error) {
+      console.log('Could not approve user');
+    }
+  }
+
+  // ═══════════════════════════
+  // SUSPEND USER
+  // ═══════════════════════════
+  window.suspendUserAction = async function(id, name) {
+    openModal('suspend', name);
+    window._pendingSuspendId = id;
+  }
+
+  // ═══════════════════════════
+  // DELETE USER
+  // ═══════════════════════════
+  window.deleteUserAction = async function(id, name) {
+    openModal('delete', name);
+    window._pendingDeleteId = id;
+  }
+
+  // Override confirmAction
+  window.confirmAction = async function() {
+    closeModal();
+    if(currentAction === 'delete' && window._pendingDeleteId) {
+      try {
+        const response = await fetch(`http://127.0.0.1:5000/api/admin/users/${window._pendingDeleteId}`, {
+          method: 'DELETE'
+        });
+        const data = await response.json();
+        if (data.success) {
+          showToast('🗑️ User deleted successfully!');
+          setTimeout(() => location.reload(), 1500);
+        }
+      } catch (error) {
+        console.log('Could not delete user');
+      }
+    } else if(currentAction === 'suspend' && window._pendingSuspendId) {
+      try {
+        const response = await fetch(`http://127.0.0.1:5000/api/admin/users/${window._pendingSuspendId}/suspend`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' }
+        });
+        const data = await response.json();
+        if (data.success) {
+          showToast('⚠️ User suspended successfully!');
+          setTimeout(() => location.reload(), 1500);
+        }
+      } catch (error) {
+        console.log('Could not suspend user');
+      }
+    }
+  }
+
+
+
+});
+</script>
+
+</body>
+</html>

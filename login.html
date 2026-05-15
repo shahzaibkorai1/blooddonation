@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Login — LifeShare</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --red:#D92B3A;--red2:#FF4D5E;--red-dk:#A81828;
+  --ink:#0F172A;--slate:#334155;--muted:#64748B;
+  --ghost:#F8FAFC;--border:#E2E8F0;--cream:#FFF8F5;
+  --shadow-lg:0 24px 64px rgba(15,23,42,0.12);
+  --shadow-md:0 8px 32px rgba(15,23,42,0.08);
+}
+html{scroll-behavior:smooth}
+body{
+  font-family:'DM Sans',sans-serif;
+  color:var(--ink);
+  background:var(--ghost);
+  min-height:100vh;
+  overflow-x:hidden;
+  display:flex;
+  align-items:stretch;
+}
+
+/* ══ PAGE LAYOUT ══ */
+.page{
+  display:grid;
+  grid-template-columns:38% 62%;
+  min-height:100vh;
+  width:100%;
+}
+
+
+/* ══ LEFT PANEL — Smaller & Beautiful ══ */
+.left-panel{
+  background:linear-gradient(160deg, #0F172A 0%, #1a0a2e 40%, #0F172A 100%);
+  position:relative;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  padding:48px 36px;
+  text-align:center;
+}
+
+/* Background decorations */
+.left-panel::before{
+  content:'';
+  position:absolute;
+  top:-80px;right:-80px;
+  width:280px;height:280px;border-radius:50%;
+  background:radial-gradient(circle,rgba(217,43,58,.18),transparent 65%);
+}
+.left-panel::after{
+  content:'';
+  position:absolute;
+  bottom:-60px;left:-60px;
+  width:220px;height:220px;border-radius:50%;
+  background:radial-gradient(circle,rgba(217,43,58,.12),transparent 65%);
+}
+
+/* Floating circles decoration */
+.deco-circle{
+  position:absolute;
+  border-radius:50%;
+  border:1px solid rgba(255,255,255,0.06);
+}
+.deco-circle-1{width:180px;height:180px;top:10%;left:50%;transform:translateX(-50%)}
+.deco-circle-2{width:280px;height:280px;top:10%;left:50%;transform:translateX(-50%)}
+.deco-circle-3{width:380px;height:380px;top:10%;left:50%;transform:translateX(-50%)}
+
+.left-content{position:relative;z-index:1}
+
+/* Logo */
+.left-logo{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  text-decoration:none;margin-bottom:40px;
+}
+.left-logo img{height:44px;width:auto;border-radius:8px;object-fit:contain}
+.left-logo-text{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;color:#fff}
+.left-logo-text span{color:var(--red2)}
+
+/* Blood drop icon */
+.blood-icon{
+  width:80px;height:80px;
+  border-radius:50%;
+  background:linear-gradient(135deg,var(--red),var(--red2));
+  display:grid;place-items:center;
+  font-size:2rem;
+  margin:0 auto 24px;
+  box-shadow:0 8px 28px rgba(217,43,58,0.45);
+  animation:float 3s ease-in-out infinite;
+}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+
+.left-title{
+  font-family:'Playfair Display',serif;
+  font-size:1.6rem;
+  font-weight:900;
+  color:#fff;
+  line-height:1.25;
+  margin-bottom:12px;
+}
+.left-title span{color:var(--red2)}
+
+.left-desc{
+  font-size:.88rem;
+  color:rgba(255,255,255,0.55);
+  line-height:1.7;
+  max-width:240px;
+  margin:0 auto 32px;
+}
+
+/* Stats row */
+.left-stats{
+  display:flex;
+  gap:0;
+  justify-content:center;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:12px;
+  padding:16px 8px;
+  margin-bottom:28px;
+}
+.ls-item{flex:1;text-align:center;padding:0 12px}
+.ls-item:not(:last-child){border-right:1px solid rgba(255,255,255,0.08)}
+.ls-num{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:900;color:#fff;line-height:1}
+.ls-num span{color:var(--red2);font-size:.8rem}
+.ls-label{font-size:.68rem;color:rgba(255,255,255,.4);margin-top:3px}
+
+/* Features list */
+.left-features{
+  display:flex;flex-direction:column;gap:10px;
+  text-align:left;
+}
+.lf-item{
+  display:flex;align-items:center;gap:10px;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.06);
+  border-radius:8px;
+  padding:10px 14px;
+}
+.lf-icon{font-size:1rem;flex-shrink:0}
+.lf-text{font-size:.8rem;color:rgba(255,255,255,0.65);line-height:1.4}
+
+/* ══ RIGHT PANEL — Form ══ */
+.right-panel{
+  background:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:48px 5%;
+  overflow-y:auto;
+}
+
+.form-box{
+  width:100%;
+  max-width:420px;
+}
+
+.form-header{margin-bottom:28px}
+.form-header h2{
+  font-family:'Playfair Display',serif;
+  font-size:1.75rem;font-weight:900;
+  margin-bottom:6px;color:var(--ink);
+}
+.form-header p{font-size:.88rem;color:var(--muted);line-height:1.6}
+
+/* Role Tabs */
+.role-tabs{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:6px;margin-bottom:24px;
+  background:var(--ghost);border-radius:10px;padding:4px;
+}
+.rtab{
+  padding:8px 4px;border-radius:7px;text-align:center;cursor:pointer;
+  border:none;background:transparent;font-family:'DM Sans',sans-serif;
+  font-size:.72rem;font-weight:600;color:var(--muted);transition:all .2s;
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+}
+.rtab .rtab-icon{font-size:1rem}
+.rtab.active{background:#fff;color:var(--red);box-shadow:0 2px 8px rgba(0,0,0,0.08)}
+.rtab:hover:not(.active){background:rgba(255,255,255,0.6)}
+
+/* Input Groups */
+.input-group{margin-bottom:16px}
+.input-group label{
+  display:block;font-size:.8rem;font-weight:600;
+  color:var(--slate);margin-bottom:6px;
+}
+.input-wrap{position:relative}
+.input-icon{
+  position:absolute;left:12px;top:50%;transform:translateY(-50%);
+  font-size:.95rem;pointer-events:none;
+}
+input[type="email"],input[type="password"],input[type="text"]{
+  width:100%;padding:11px 12px 11px 38px;
+  border:1.5px solid var(--border);border-radius:9px;
+  font-family:'DM Sans',sans-serif;font-size:.88rem;color:var(--ink);
+  background:#fff;transition:all .2s;outline:none;
+}
+input:focus{border-color:var(--red);box-shadow:0 0 0 3px rgba(217,43,58,0.09)}
+input::placeholder{color:#CBD5E1}
+
+/* Show/hide password */
+.pw-toggle{
+  position:absolute;right:12px;top:50%;transform:translateY(-50%);
+  background:none;border:none;cursor:pointer;font-size:.9rem;color:var(--muted);
+  transition:color .2s;
+}
+.pw-toggle:hover{color:var(--ink)}
+
+/* Form meta row */
+.form-meta{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:20px;
+}
+.remember{display:flex;align-items:center;gap:7px;font-size:.8rem;color:var(--muted);cursor:pointer}
+.remember input{width:15px;height:15px;accent-color:var(--red)}
+.forgot-link{font-size:.8rem;color:var(--red);font-weight:600;text-decoration:none;cursor:pointer}
+.forgot-link:hover{text-decoration:underline}
+
+/* Submit Button */
+.btn-submit{
+  width:100%;padding:13px;
+  background:linear-gradient(135deg,var(--red),var(--red2));
+  color:#fff;border:none;border-radius:10px;
+  font-family:'DM Sans',sans-serif;font-size:.95rem;font-weight:700;
+  cursor:pointer;transition:all .25s;
+  box-shadow:0 4px 16px rgba(217,43,58,0.3);
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  position:relative;overflow:hidden;
+}
+.btn-submit:hover{transform:translateY(-1px);box-shadow:0 6px 22px rgba(217,43,58,0.4)}
+.btn-submit:active{transform:translateY(0)}
+
+/* Spinner */
+.spinner{
+  width:16px;height:16px;border-radius:50%;
+  border:2px solid rgba(255,255,255,0.3);
+  border-top-color:#fff;
+  animation:spin .7s linear infinite;
+  display:none;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Divider */
+.divider{display:flex;align-items:center;gap:12px;margin:20px 0}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.divider span{font-size:.75rem;color:var(--muted)}
+
+/* Social buttons */
+.social-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
+.btn-social{
+  padding:10px;border-radius:9px;border:1.5px solid var(--border);
+  background:#fff;font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:600;
+  cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:7px;color:var(--slate);
+}
+.btn-social:hover{border-color:var(--red);color:var(--red);background:var(--cream)}
+
+/* Bottom link */
+.bottom-link{text-align:center;font-size:.83rem;color:var(--muted);margin-top:20px}
+.bottom-link a{color:var(--red);font-weight:600;text-decoration:none}
+.bottom-link a:hover{text-decoration:underline}
+
+/* Forgot Password Panel */
+.forgot-panel{display:none}
+.forgot-panel.show{display:block}
+.main-form{display:block}
+.main-form.hide{display:none}
+.back-btn{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:.82rem;color:var(--muted);cursor:pointer;
+  background:none;border:none;font-family:'DM Sans',sans-serif;
+  margin-bottom:20px;transition:color .2s;
+}
+.back-btn:hover{color:var(--ink)}
+
+/* Responsive */
+@media(max-width:768px){
+  .page{grid-template-columns:1fr}
+  .left-panel{display:none}
+  .right-panel{padding:40px 6%}
+  body{background:#fff}
+}
+@media(max-width:400px){
+  .right-panel{padding:32px 5%}
+  .form-box{max-width:100%}
+}
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- ══ LEFT PANEL ══ -->
+  <div class="left-panel">
+    <!-- Decorative circles -->
+    <div class="deco-circle deco-circle-1"></div>
+    <div class="deco-circle deco-circle-2"></div>
+    <div class="deco-circle deco-circle-3"></div>
+
+    <div class="left-content">
+      <!-- Logo -->
+      <a href="index.html" class="left-logo">
+        <!-- <img src="images/" alt="LifeShare"/> -->
+        <span class="left-logo-text">Life<span>Share</span></span>
+      </a>
+
+      <!-- Icon -->
+      <div class="blood-icon">🩸</div>
+
+      <!-- Title -->
+      <h2 class="left-title">
+        Welcome<br>Back to<br><span>LifeShare</span>
+      </h2>
+      <p class="left-desc">Log in to manage your donations, find blood requests, or share medicines with your community.</p>
+
+      <!-- Stats -->
+      <div class="left-stats">
+        <div class="ls-item">
+          <div class="ls-num">1K<span>+</span></div>
+          <div class="ls-label">Donors</div>
+        </div>
+        <div class="ls-item">
+          <div class="ls-num">500<span>+</span></div>
+          <div class="ls-label">Saved</div>
+        </div>
+        <div class="ls-item">
+          <div class="ls-num">8</div>
+          <div class="ls-label">Groups</div>
+        </div>
+      </div>
+
+      <!-- Features -->
+      <div class="left-features">
+        <div class="lf-item">
+          <span class="lf-icon">📍</span>
+          <span class="lf-text">GPS-based matching with donors nearby</span>
+        </div>
+        <div class="lf-item">
+          <span class="lf-icon">🔔</span>
+          <span class="lf-text">Real-time emergency blood alerts</span>
+        </div>
+        <div class="lf-item">
+          <span class="lf-icon">🔒</span>
+          <span class="lf-text">Secure & verified platform</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ RIGHT PANEL ══ -->
+  <div class="right-panel">
+    <div class="form-box">
+
+      <!-- Main Login Form -->
+      <div class="main-form" id="mainForm">
+        <div class="form-header">
+          <h2>Welcome Back</h2>
+          <p>Enter your email and password to access your LifeShare account.</p>
+        </div>
+
+        <!-- Role Tabs -->
+        <div class="role-tabs">
+          <button class="rtab active" onclick="setRole(this,'Donor')">
+            <span class="rtab-icon">🩸</span>Donor
+          </button>
+          <button class="rtab" onclick="setRole(this,'Recipient')">
+            <span class="rtab-icon">🤲</span>Recipient
+          </button>
+          <button class="rtab" onclick="setRole(this,'Hospital')">
+            <span class="rtab-icon">🏥</span>Hospital
+          </button>
+          <button class="rtab" onclick="setRole(this,'Admin')">
+            <span class="rtab-icon">🛡️</span>Admin
+          </button>
+        </div>
+
+        <!-- Email -->
+        <div class="input-group">
+          <label>Email Address</label>
+          <div class="input-wrap">
+            <span class="input-icon">✉️</span>
+            <input type="email" id="email" placeholder="you@example.com"/>
+          </div>
+        </div>
+
+        <!-- Password -->
+        <div class="input-group">
+          <label>Password</label>
+          <div class="input-wrap">
+            <span class="input-icon">🔒</span>
+            <input type="password" id="password" placeholder="Enter your password"/>
+            <button class="pw-toggle" onclick="togglePw()" type="button" id="pwToggle">👁️</button>
+          </div>
+        </div>
+
+        <!-- Meta Row -->
+        <div class="form-meta">
+          <label class="remember">
+            <input type="checkbox" id="remember"/> Remember me
+          </label>
+          <span class="forgot-link" onclick="showForgot()">Forgot password?</span>
+        </div>
+
+        <!-- Submit -->
+        <button class="btn-submit" onclick="submitLogin()" id="loginBtn">
+          <span id="btnText">Log In to LifeShare →</span>
+          <div class="spinner" id="spinner"></div>
+        </button>
+
+        <div class="divider"><span>or continue with</span></div>
+
+        <div class="social-row">
+          <button class="btn-social">🌐 Google</button>
+          <button class="btn-social">📘 Facebook</button>
+        </div>
+
+        <div class="bottom-link">
+          Don't have an account? <a href="register.html">Register Free</a>
+        </div>
+      </div>
+
+      <!-- Forgot Password Panel -->
+      <div class="forgot-panel" id="forgotPanel">
+        <button class="back-btn" onclick="hideForgot()">← Back to Login</button>
+        <div class="form-header">
+          <h2>Reset Password</h2>
+          <p>Enter your email and we'll send you a reset link.</p>
+        </div>
+        <div class="input-group">
+          <label>Email Address</label>
+          <div class="input-wrap">
+            <span class="input-icon">✉️</span>
+            <input type="email" id="resetEmail" placeholder="you@example.com"/>
+          </div>
+        </div>
+        <button class="btn-submit" onclick="alert('✅ Reset link sent! Check your email.')">
+          Send Reset Link →
+        </button>
+        <div class="bottom-link" style="margin-top:16px">
+          <a href="register.html">Create a new account</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+let selectedRole = 'Donor';
+
+function setRole(el, role){
+  document.querySelectorAll('.rtab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  selectedRole = role;
+}
+
+function togglePw(){
+  const pw = document.getElementById('password');
+  const btn = document.getElementById('pwToggle');
+  if(pw.type === 'password'){ pw.type = 'text'; btn.textContent = '🙈'; }
+  else{ pw.type = 'password'; btn.textContent = '👁️'; }
+}
+
+function showForgot(){
+  document.getElementById('mainForm').classList.add('hide');
+  document.getElementById('forgotPanel').classList.add('show');
+}
+function hideForgot(){
+  document.getElementById('mainForm').classList.remove('hide');
+  document.getElementById('forgotPanel').classList.remove('show');
+}
+
+async function submitLogin(){
+  const email    = document.getElementById('email')?.value || document.querySelector('input[type="email"]')?.value;
+  const password = document.getElementById('password')?.value;
+
+  if(!email || !password){
+    alert('❌ Please enter email and password!');
+    return;
+  }
+
+  // Show loading
+  document.getElementById('btnText').style.display = 'none';
+  document.getElementById('spinner').style.display = 'block';
+
+  try {
+    const response = await fetch('http://127.0.0.1:5000/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+    const data = await response.json();
+
+    if(data.success){
+      localStorage.setItem('token',      data.token);
+      localStorage.setItem('user',       JSON.stringify(data.user));
+      localStorage.setItem('role',       data.user.role);
+      localStorage.setItem('user_id',    String(data.user.id));
+      localStorage.setItem('user_name',  data.user.full_name);
+      localStorage.setItem('blood_group',data.user.blood_group || '');
+      localStorage.setItem('city',       data.user.city || '');
+
+      alert('✅ Login successful! Welcome ' + data.user.full_name);
+
+      if(data.user.role === 'donor')          window.location.href = 'donor-dashboard.html';
+      else if(data.user.role === 'recipient') window.location.href = 'recipient-dashboard.html';
+      else if(data.user.role === 'admin')     window.location.href = 'admin-panel.html';
+      else                                    window.location.href = 'donor-dashboard.html';
+    } else {
+      alert('❌ ' + data.message);
+    }
+  } catch(err){
+    alert('❌ Server not running! Please start the backend.');
+  }
+
+  // Hide loading
+  document.getElementById('btnText').style.display = 'inline';
+  document.getElementById('spinner').style.display = 'none';
+}
+
+// Enter key support
+document.addEventListener('keydown', e => {
+  if(e.key === 'Enter' && !document.getElementById('forgotPanel').classList.contains('show')){
+    submitLogin();
+  }
+});
+</script>
+</body>
+</html>
